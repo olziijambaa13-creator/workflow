@@ -15,8 +15,6 @@
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "e8ba56d2-ff80-4934-90c5-573edda10ab3",
-      serviceWorkerPath: "/workflow/OneSignalSDKWorker.js",
-      serviceWorkerParam: { scope: "/workflow/" },
       notifyButton: { enable: false },
       allowLocalhostAsSecureOrigin: true,
     });
