@@ -8,18 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- OneSignal -->
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "e8ba56d2-ff80-4934-90c5-573edda10ab3",
-      notifyButton: { enable: false },
-      allowLocalhostAsSecureOrigin: true,
-    });
-  });
-</script>
+
 <style>
 :root{
   --bg:#0c0c0e;--bg2:#131316;--bg3:#1a1a1f;--bg4:#232329;--bg5:#2c2c34;
@@ -73,13 +62,6 @@ select.fi option{background:var(--bg3)}
 .av{width:28px;height:28px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
 .unm{font-size:12px;font-weight:500;color:var(--text)}
 .url{font-size:10px;color:var(--text3)}
-.nb{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:var(--rs);background:var(--bg3);border:1px solid var(--border);cursor:pointer;margin-bottom:7px;transition:border-color .15s}
-.nb:hover{border-color:var(--border2)}
-.nd{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:all .3s}
-.nd.on{background:var(--green);box-shadow:0 0 0 3px rgba(45,212,160,.18);animation:pd 2s infinite}
-@keyframes pd{0%,100%{box-shadow:0 0 0 3px rgba(45,212,160,.18)}50%{box-shadow:0 0 0 6px rgba(45,212,160,.06)}}
-.nbl{font-size:11px;color:var(--text2);flex:1}
-.nbb{font-size:10px;padding:2px 6px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer}
 .lobtn{width:100%;padding:7px;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s}
 .lobtn:hover{background:var(--bg3);color:var(--text)}
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
@@ -202,11 +184,6 @@ tr:hover td{background:var(--bg3)}
         <div class="av" id="uAv">--</div>
         <div><div class="unm" id="uNm">--</div><div class="url" id="uRl">--</div></div>
       </div>
-      <div class="nb" id="notifBar" onclick="toggleNotif()">
-        <div class="nd" id="nDot"></div>
-        <span class="nbl" id="nLbl">Notification унтарсан</span>
-        <button class="nbb" id="nBtn">Асаах</button>
-      </div>
       <button class="lobtn" onclick="doLogout()">← Гарах</button>
     </div>
   </div>
@@ -316,7 +293,7 @@ let wPage=1, iPage=1;
 const WPP=20, IPP=15;
 let wSrch='', iSrch='';
 let everyOn=false;
-let notifOn=false;
+
 
 // Cache
 let USERS=[], INSTRS=[], ACKS=[];
@@ -405,7 +382,6 @@ function initApp(){
   document.getElementById('uRl').textContent=CU.role==='admin'?'Админ':'Ажилтан';
   buildNav();
   navigate(CU.role==='admin'?'dashboard':'today');
-  updateNUI();
 }
 
 function buildNav(){
@@ -753,9 +729,7 @@ async function addInstr(){
   }).select().single();
   if(error){showToast('Алдаа гарлаа: '+error.message);return;}
   everyOn=false;
-  // OneSignal push notification
-  await sendPushToAll(`📋 Шинэ ${tLabel(type)} заавар`, txt.slice(0,80));
-  showToast('Заавар нийтлэгдлээ! Мэдэгдэл илгээгдлээ.',type==='habea'?'h':'g');
+  showToast('Заавар нийтлэгдлээ!',type==='habea'?'h':'g');
   navigate('add-instr');
 }
 
@@ -1215,36 +1189,6 @@ function stX(ws,rows,cols){
   const L='ABCDEFGHIJ'.split('');
   for(let c=0;c<cols;c++){const a=L[c]+'1';if(!ws[a])continue;ws[a].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A8A'}},alignment:{horizontal:'center'}};}
   for(let r=2;r<=rows;r++)for(let c=0;c<cols;c++){const a=L[c]+r;if(!ws[a])continue;ws[a].s={fill:{fgColor:{rgb:r%2===0?'EFF6FF':'FFFFFF'}},alignment:{wrapText:true}};}
-}
-
-// ============================================================
-// ONESIGNAL PUSH NOTIFICATION
-// ============================================================
-async function sendPushToAll(title, message){
-  try{
-    await sb.functions.invoke('send-push', {
-      body: { title, message }
-    });
-  }catch(e){console.log('Push notification алдаа:',e);}
-}
-
-async function toggleNotif(){
-  if(typeof OneSignal==='undefined'){showToast('OneSignal ачаалагдаагүй байна');return;}
-  try{
-    if(notifOn){
-      await OneSignal.User.PushSubscription.optOut();
-      notifOn=false;updateNUI();showToast('Notification унтраагдлаа.');
-    } else {
-      await OneSignal.User.PushSubscription.optIn();
-      notifOn=true;updateNUI();showToast('🔔 Notification идэвхжлээ!','g');
-    }
-  }catch(e){showToast('Notification тохиргооны алдаа');}
-}
-function updateNUI(){
-  const d=document.getElementById('nDot'),l=document.getElementById('nLbl'),b=document.getElementById('nBtn');
-  if(!d)return;
-  if(notifOn){d.classList.add('on');l.textContent='Notification идэвхтэй';b.textContent='Унтраах';b.style.color='var(--red)';}
-  else{d.classList.remove('on');l.textContent='Notification унтарсан';b.textContent='Асаах';b.style.color='';}
 }
 
 // ============================================================
