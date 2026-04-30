@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B SOFT — Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#0c0c0e;--bg2:#131316;--bg3:#1a1a1f;--bg4:#232329;--bg5:#2c2c34;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#ededf0;--text2:#9999a8;--text3:#55555f;
+  --accent:#5b7fff;--accent2:#4a6aee;--accent-glow:rgba(91,127,255,0.13);
+  --green:#2dd4a0;--gbg:rgba(45,212,160,0.09);--gbd:rgba(45,212,160,0.25);
+  --red:#f06b6b;--rbg:rgba(240,107,107,0.09);--rbd:rgba(240,107,107,0.25);
+  --amber:#f5a623;--abg:rgba(245,166,35,0.09);--abd:rgba(245,166,35,0.25);
+  --hb:#a78bfa;--hbbg:rgba(167,139,250,0.09);--hbbd:rgba(167,139,250,0.28);
+  --ev:#64dcff;--evbg:rgba(100,220,255,0.09);--evbd:rgba(100,220,255,0.25);
+  --r:10px;--rs:6px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6}
+input,textarea,select,button{font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--text)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px}
+
+/* ── LOGIN ── */
+.lp{display:flex;align-items:center;justify-content:center;height:100vh}
+.lbox{width:350px}
+.lbrand{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
+.ltitle{font-size:24px;font-weight:600;color:var(--text);margin-bottom:26px;line-height:1.3}
+.ltitle span{color:var(--text3)}
+.lcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px}
+.fl{margin-bottom:13px}
+.fl label{display:block;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;color:var(--text);outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--accent)}
+.fi::placeholder{color:var(--text3)}
+select.fi option{background:var(--bg3)}
+.ferr{font-size:12px;color:var(--red);margin-top:5px;min-height:16px}
+.lbtn{width:100%;padding:10px;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-weight:500;cursor:pointer;margin-top:4px;transition:background .15s}
+.lbtn:hover{background:var(--accent2)}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:212px;min-width:212px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sb-brand{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-family:'IBM Plex Mono',monospace}
+.sb-name{font-size:14px;font-weight:600;color:var(--text);margin-top:2px}
+.sb-nav{flex:1;padding:8px 6px;overflow-y:auto}
+.ng{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px 3px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rs);cursor:pointer;color:var(--text2);transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.active{background:var(--accent-glow);color:var(--accent)}
+.ni.hni.active{background:var(--hbbg);color:var(--hb)}
+.ni.hni:hover{background:var(--hbbg);color:var(--hb)}
+.ni svg{width:14px;height:14px;flex-shrink:0}
+.ni span{font-size:12px;flex:1;text-align:left}
+.sbfoot{padding:12px 14px;border-top:1px solid var(--border)}
+.urow{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.av{width:28px;height:28px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.unm{font-size:12px;font-weight:500;color:var(--text)}
+.url{font-size:10px;color:var(--text3)}
+.nb{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:var(--rs);background:var(--bg3);border:1px solid var(--border);cursor:pointer;margin-bottom:7px;transition:border-color .15s}
+.nb:hover{border-color:var(--border2)}
+.nd{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:all .3s}
+.nd.on{background:var(--green);box-shadow:0 0 0 3px rgba(45,212,160,.18);animation:pd 2s infinite}
+@keyframes pd{0%,100%{box-shadow:0 0 0 3px rgba(45,212,160,.18)}50%{box-shadow:0 0 0 6px rgba(45,212,160,.06)}}
+.nbl{font-size:11px;color:var(--text2);flex:1}
+.nbb{font-size:10px;padding:2px 6px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer}
+.lobtn{width:100%;padding:7px;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s}
+.lobtn:hover{background:var(--bg3);color:var(--text)}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:20px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.pgt{font-size:19px;font-weight:600;color:var(--text)}
+.pgs{font-size:11px;color:var(--text3);margin-top:2px}
+.content{padding:20px 24px;flex:1}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.ct{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+
+/* ── STATS ── */
+.sg{display:grid;gap:10px;margin-bottom:14px}
+.sg4{grid-template-columns:repeat(4,1fr)}
+.sg3{grid-template-columns:repeat(3,1fr)}
+.sg2{grid-template-columns:repeat(2,1fr)}
+.st{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.sv{font-size:24px;font-weight:600;font-family:'IBM Plex Mono',monospace;line-height:1}
+.sl{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* ── PROGRESS ── */
+.prog{background:var(--bg5);height:4px;border-radius:2px;margin-top:4px;overflow:hidden}
+.pf{height:100%;border-radius:2px;transition:width .4s}
+
+/* ── BTN ── */
+.btn{padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;font-size:12px}
+.btn:hover{background:var(--bg3);color:var(--text)}
+.btnp{background:var(--accent);border-color:var(--accent);color:#fff}
+.btnp:hover{background:var(--accent2);border-color:var(--accent2)}
+.btnsm{padding:4px 10px;font-size:11px}
+.btnd{color:var(--red);border-color:var(--rbd)}
+.btnd:hover{background:var(--rbg)}
+.btnh{color:var(--hb);border-color:var(--hbbd);background:var(--hbbg)}
+.btnh:hover{background:rgba(167,139,250,.18)}
+.btng{color:var(--green);border-color:var(--gbd);background:var(--gbg)}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap;border:1px solid transparent}
+.bgg{background:var(--gbg);color:var(--green);border-color:var(--gbd)}
+.bgr{background:var(--rbg);color:var(--red);border-color:var(--rbd)}
+.bgb{background:var(--accent-glow);color:var(--accent);border-color:rgba(91,127,255,.2)}
+.bga{background:var(--abg);color:var(--amber);border-color:var(--abd)}
+.bgh{background:var(--hbbg);color:var(--hb);border-color:var(--hbbd)}
+.bgev{background:var(--evbg);color:var(--ev);border-color:var(--evbd)}
+
+/* ── TABLE ── */
+.tw{overflow-x:auto;overflow-y:auto}
+.tw table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;padding:8px 11px;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1}
+td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.tdm{color:var(--text);font-weight:500}
+
+/* ── FORM ── */
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.lbl{display:block;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.fta{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;color:var(--text);outline:none;resize:vertical;min-height:80px;transition:border-color .15s;line-height:1.6}
+.fta:focus{border-color:var(--accent)}
+.fta::placeholder{color:var(--text3)}
+
+/* ── TOGGLE ── */
+.togwrap{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;margin-bottom:10px;transition:border-color .15s;user-select:none}
+.togwrap:hover{border-color:var(--border2)}
+.tog{width:36px;height:20px;border-radius:10px;background:var(--bg5);position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--accent)}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.tog.on::after{transform:translateX(16px)}
+.tog.honn{background:var(--hb)}
+.toglbl{font-size:12px;color:var(--text);flex:1}
+.togsub{font-size:11px;color:var(--text3)}
+
+/* ── HABEA HEADER ── */
+.hbhdr{display:flex;align-items:center;gap:14px;padding:14px 18px;background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(167,139,250,.04));border:1px solid var(--hbbd);border-radius:var(--r);margin-bottom:14px}
+.hbico{font-size:26px;flex-shrink:0}
+.hbttl{font-size:14px;font-weight:600;color:var(--hb)}
+.hbsub{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* ── INSTR CARD ── */
+.ic{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:10px;transition:border-color .2s}
+.ic:hover{border-color:var(--border2)}
+.ichb{border-color:var(--hbbd);background:linear-gradient(135deg,var(--bg2),rgba(167,139,250,.04))}
+.icmeta{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap}
+.icbody{font-size:13px;color:var(--text);line-height:1.7}
+.icfoot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* ── SEARCH ── */
+.srow{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.si{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:8px 12px;color:var(--text);outline:none;font-size:12px;transition:border-color .15s}
+.si:focus{border-color:var(--accent)}
+.si::placeholder{color:var(--text3)}
+
+/* ── PAGINATION ── */
+.pag{display:flex;align-items:center;gap:5px;margin-top:10px;flex-wrap:wrap}
+.pb{padding:4px 9px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:11px;transition:all .15s}
+.pb:hover{background:var(--bg3);color:var(--text)}
+.pb.cur{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
+.pinfo{font-size:10px;color:var(--text3);margin-left:auto;font-family:'IBM Plex Mono',monospace}
+
+/* ── SIG ── */
+.sigwrap{border:1.5px dashed var(--border2);border-radius:var(--rs);background:var(--bg3);position:relative;overflow:hidden;cursor:crosshair}
+.sigwrap canvas{display:block;width:100%;height:140px;touch-action:none}
+.sigph{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text3);pointer-events:none;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+.sigacts{display:flex;gap:7px;margin-top:7px}
+.sth{width:68px;height:26px;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);object-fit:contain;cursor:pointer;vertical-align:middle}
+
+/* ── OVERLAY / MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:490px;max-width:96vw;max-height:90vh;overflow-y:auto}
+.mttl{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.msub{font-size:11px;color:var(--text3);margin-bottom:16px}
+
+/* ── EXPORT ── */
+.expbtn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--rs);color:var(--green);cursor:pointer;font-size:12px;transition:all .15s;font-family:'IBM Plex Sans',sans-serif}
+.expbtn:hover{background:rgba(45,212,160,.18)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 16px;font-size:12px;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .25s;z-index:999;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.tg{border-color:var(--gbd);color:var(--green)}
+.th{border-color:var(--hbbd);color:var(--hb)}
+
+@media(max-width:900px){.sg4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.sidebar{width:100%;min-width:unset}.layout{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="lp">
+<div class="lbox">
+  <div class="lbrand">B SOFT LLC</div>
+  <div class="ltitle">Нэвтрэх<br><span>системд</span></div>
+  <div class="lcard">
+    <div class="fl"><label>Нэвтрэх нэр</label><input class="fi" id="lu" type="text" placeholder="username" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="fl"><label>Нууц үг</label><input class="fi" id="lp2" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="ferr" id="lerr"></div>
+    <button class="lbtn" onclick="doLogin()">Нэвтрэх →</button>
+  </div>
+</div>
+</div>
+
+<!-- APP -->
+<div id="appLayout" class="layout" style="display:none">
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-brand">B SOFT LLC</div><div class="sb-name">Workflow</div></div>
+    <nav class="sb-nav" id="sideNav"></nav>
+    <div class="sbfoot">
+      <div class="urow">
+        <div class="av" id="uAv">--</div>
+        <div><div class="unm" id="uNm">--</div><div class="url" id="uRl">--</div></div>
+      </div>
+      <div class="nb" onclick="toggleNotif()">
+        <div class="nd" id="nDot"></div>
+        <span class="nbl" id="nLbl">Notification унтарсан</span>
+        <button class="nbb" id="nBtn">Асаах</button>
+      </div>
+      <button class="lobtn" onclick="doLogout()">← Гарах</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div><div class="pgt" id="pgT">—</div><div class="pgs" id="pgS">—</div></div>
+    </div>
+    <div class="content" id="CA"></div>
+  </div>
+</div>
+
+<!-- SIG MODAL -->
+<div class="overlay" id="sigModal">
+  <div class="modal">
+    <div class="mttl">Гарын үсэг зурах</div>
+    <div class="msub" id="sigSub"></div>
+    <div class="sigwrap" id="sigWrap"><canvas id="sigCanvas"></canvas><div class="sigph" id="sigPh">Энд гарын үсэг зурна уу...</div></div>
+    <div class="sigacts">
+      <button class="btn btnsm" onclick="clearSig()">Арилгах</button>
+      <div style="flex:1"></div>
+      <button class="btn btnsm" onclick="closeSig()">Болих</button>
+      <button class="btn btnp btnsm" onclick="confirmSig()">✔ Баталгаажуулах</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIG VIEW -->
+<div class="overlay" id="sigVM">
+  <div class="modal" style="width:360px">
+    <div class="mttl" id="svT">Гарын үсэг</div>
+    <div style="margin-top:10px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg3);padding:8px;text-align:center"><img id="svI" src="" style="max-width:100%;height:auto;display:block;margin:0 auto"></div>
+    <div style="margin-top:10px;display:flex;justify-content:flex-end"><button class="btn btnsm" onclick="closeSV()">Хаах</button></div>
+  </div>
+</div>
+
+<!-- EDIT INSTR MODAL -->
+<div class="overlay" id="eiModal">
+  <div class="modal">
+    <div class="mttl">Заавар засах</div>
+    <div class="msub">Агуулга, огноо, горимыг өөрчлөх боломжтой</div>
+    <input type="hidden" id="eiId">
+    <div class="fr2" style="margin-bottom:10px">
+      <div><label class="lbl">Төрөл</label>
+        <select class="fi" id="eiType">
+          <option value="general">Ерөнхий заавар</option>
+          <option value="habea">🔷 HABEA заавар</option>
+          <option value="urgent">🚨 Яаралтай</option>
+        </select></div>
+      <div><label class="lbl">Давтамж</label>
+        <select class="fi" id="eiMode" onchange="eiModeChg()">
+          <option value="once">Нэг удаа (огноо сонгох)</option>
+          <option value="every">Өдөр бүр (байнга)</option>
+        </select></div>
+    </div>
+    <div id="eiDW" style="margin-bottom:10px"><label class="lbl">Огноо</label><input class="fi" id="eiDate" type="date" style="width:100%"></div>
+    <div style="margin-bottom:10px">
+      <label class="lbl">Хэнд илгээх</label>
+      <div id="eiTargBox" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0;border-bottom:1px solid var(--border);margin-bottom:6px">
+          <input type="checkbox" id="eiTargAll" onchange="eiTargAllChg()" style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer">
+          <span style="font-size:12px;font-weight:600;color:var(--text)">Бүх ажилтан</span>
+        </label>
+        <div id="eiTargList" style="max-height:140px;overflow-y:auto"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px"><label class="lbl">Агуулга</label><textarea class="fta" id="eiText" style="min-height:90px"></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btnsm" onclick="closeEI()">Болих</button>
+      <button class="btn btnp btnsm" onclick="saveEI()">Хадгалах</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div class="overlay" id="euModal">
+  <div class="modal" style="width:380px">
+    <div class="mttl">Хэрэглэгч засах</div><div class="msub"></div>
+    <input type="hidden" id="euId">
+    <div style="margin-bottom:9px"><label class="lbl">Бүтэн нэр</label><input class="fi" id="euNm" type="text"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Нэвтрэх нэр</label><input class="fi" id="euUsr" type="text" autocomplete="off"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Шинэ нууц үг <span style="font-weight:400;font-size:10px">(хоосон = өөрчлөгдөхгүй)</span></label><input class="fi" id="euPw" type="text" autocomplete="off"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Мэргэжил / Албан тушаал</label><input class="fi" id="euProf" type="text"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Утасны дугаар</label><input class="fi" id="euPhone" type="tel"></div>
+    <div style="margin-bottom:14px"><label class="lbl">Эрх</label><select class="fi" id="euRl"><option value="worker">Ажилтан</option><option value="admin">Админ</option></select></div>
+    <div class="ferr" id="euErr"></div>
+    <div style="display:flex;gap:7px"><button class="btn btnp" style="flex:1" onclick="saveEU()">Хадгалах</button><button class="btn" onclick="closeEU()">Болих</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const SK='bsoft_wf_v6';
+const DEF={
+  users:[
+    {id:5,name:'Админ',username:'admin',password:'admin123',role:'admin',profession:'Системийн администратор',phone:''},
+  ],
+  // everyday:true → date is null, acks keyed as "YYYY-MM-DD_uid"
+  // everyday:false → date set, acks keyed as String(uid)
+  instructions:[]
+};
+
+function loadDB(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):JSON.parse(JSON.stringify(DEF));}catch{return JSON.parse(JSON.stringify(DEF));}}
+function saveDB(d){localStorage.setItem(SK,JSON.stringify(d));}
+
+let DB=loadDB(),CU=null,pendingSigId=null;
+let wPage=1,iPage=1; const WPP=20,IPP=15;
+let wSrch='',iSrch='';
+let everyOn=false;
+
+function today(){return new Date().toISOString().slice(0,10);}
+function nowTime(){return new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'});}
+function nowDT(){return new Date().toLocaleString('mn-MN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
+function workers(){return DB.users.filter(u=>u.role==='worker');}
+function tLabel(t){return{general:'Ерөнхий',habea:'HABEA',urgent:'Яаралтай'}[t]||'Ерөнхий';}
+function tBadge(t,ev){
+  let b=t==='habea'?'<span class="badge bgh">🔷 HABEA</span>':t==='urgent'?'<span class="badge bgr">🚨 Яаралтай</span>':'<span class="badge bgb">Ерөнхий</span>';
+  if(ev) b+=' <span class="badge bgev">🔄 Өдөр бүр</span>';
+  return b;
+}
+
+function targLabel(i){
+  if(i.targets==='all') return '<span class="badge bgb" style="font-size:9px">Бүх ажилтан</span>';
+  const ws=workers();
+  const ids=Array.isArray(i.targets)?i.targets:[Number(i.targets)];
+  const names=ids.map(id=>ws.find(w=>w.id===id)?.name||'').filter(Boolean);
+  if(names.length===0) return '<span class="badge bgb" style="font-size:9px">Бүх ажилтан</span>';
+  if(names.length<=3) return names.map(n=>`<span class="badge bga" style="font-size:9px">${n}</span>`).join(' ');
+  return `<span class="badge bga" style="font-size:9px">${names.slice(0,2).join(', ')} +${names.length-2}</span>`;
+}
+
+
+function targMatch(i, uid){
+  if(i.targets==='all') return true;
+  if(Array.isArray(i.targets)) return i.targets.includes(Number(uid));
+  return Number(i.targets)===Number(uid);
+}
+
+
+function ackKey(i,uid){return i.everyday?today()+'_'+uid:String(uid);}
+function getAck(i,uid){return i.acks[ackKey(i,uid)]||null;}
+function setAck(i,uid,val){i.acks[ackKey(i,uid)]=val;}
+
+// Is this instruction visible today?
+function activeToday(i){return i.everyday||(i.date===today());}
+
+// ============================================================
+// AUTH
+// ============================================================
+function doLogin(){
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp2').value;
+  const f=DB.users.find(x=>x.username===u&&x.password===p);
+  if(!f){document.getElementById('lerr').textContent='Нэвтрэх нэр эсвэл нууц үг буруу.';return;}
+  CU=f;
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appLayout').style.display='flex';
+  initApp();
+}
+function doLogout(){
+  CU=null;
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('appLayout').style.display='none';
+  document.getElementById('lu').value='';document.getElementById('lp2').value='';document.getElementById('lerr').textContent='';
+}
+
+// ============================================================
+// APP
+// ============================================================
+function initApp(){
+  document.getElementById('uAv').textContent=(CU.name[0]||'?').toUpperCase();
+  document.getElementById('uNm').textContent=CU.name;
+  document.getElementById('uRl').textContent=CU.role==='admin'?'Админ':'Ажилтан';
+  buildNav();
+  navigate(CU.role==='admin'?'dashboard':'today');
+  updateNUI();
+}
+
+function buildNav(){
+  const nav=document.getElementById('sideNav');
+  const ai=[
+    {g:'Хяналт'},
+    {id:'dashboard', ic:iGrid,  lb:'Хяналтын самбар'},
+    {id:'habea-db',  ic:iHb,    lb:'HABEA самбар', cl:'hni'},
+    {g:'Заавар'},
+    {id:'add-instr', ic:iPlus,  lb:'Заавар нэмэх'},
+    {id:'tracking',  ic:iChart, lb:'Хяналт'},
+    {id:'report',    ic:iRep,   lb:'Тайлан / Export'},
+    {g:'Хэрэглэгч'},
+    {id:'workers',   ic:iUsers, lb:'Ажилтнууд'},
+    {id:'mu',        ic:iUP,    lb:'Хэрэглэгч удирдах'},
+  ];
+  const wi=[
+    {id:'today',   ic:iClock, lb:'Өнөөдрийн заавар'},
+    {id:'habea-w', ic:iHb,    lb:'HABEA заавар', cl:'hni'},
+    {id:'history', ic:iList,  lb:'Зааврын түүх'},
+  ];
+  const items=CU.role==='admin'?ai:wi;
+  nav.innerHTML=items.map(it=>{
+    if(it.g) return `<div class="ng">${it.g}</div>`;
+    return `<button class="ni${it.cl?' '+it.cl:''}" id="nav-${it.id}" onclick="navigate('${it.id}')">${it.ic()}<span>${it.lb}</span></button>`;
+  }).join('');
+}
+
+function navigate(page){
+  DB=loadDB();
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('nav-'+page);if(btn)btn.classList.add('active');
+  const T={
+    'dashboard':  ['Хяналтын самбар','Ерөнхий тойм'],
+    'habea-db':   ['HABEA самбар','HABEA зааварчилгааны хяналт'],
+    'add-instr':  ['Заавар нэмэх','Шинэ ажлын заавар үүсгэх'],
+    'tracking':   ['Хяналт','Хэн авсан, хэн аваагүй'],
+    'report':     ['Тайлан / Export','Excel файл татаж авах'],
+    'workers':    ['Ажилтнууд','Бүртгэлтэй ажилтнуудын жагсаалт'],
+    'mu':         ['Хэрэглэгч удирдах','Нэмэх · засах · устгах'],
+    'today':      ['Өнөөдрийн заавар',today()],
+    'habea-w':    ['HABEA заавар','Миний HABEA зааварчилгаа'],
+    'history':    ['Зааврын түүх','Бүх заавруудын жагсаалт'],
+  };
+  const [t,s]=T[page]||['',''];
+  document.getElementById('pgT').textContent=t;
+  document.getElementById('pgS').textContent=s;
+  const M={
+    'dashboard': rDash,'habea-db': rHabeaDB,'add-instr': rAddInstr,
+    'tracking':  rTracking,'report': rReport,'workers': rWorkers,
+    'mu':        rMU,'today': rToday,'habea-w': rHabeaW,'history': rHistory,
+  };
+  document.getElementById('CA').innerHTML=(M[page]||(() =>''))();
+}
+
+// ============================================================
+// ADMIN — DASHBOARD
+// ============================================================
+function rDash(){
+  const ws=workers(),all=DB.instructions;
+  const todayAll=all.filter(i=>activeToday(i));
+  let totalAcks=0;
+  all.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))totalAcks++;}));
+  const poss=all.length*ws.length;
+  const pct=poss?Math.round(totalAcks/poss*100):0;
+  const sorted=[...all].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999')).slice(0,8);
+
+  return `
+<div class="sg sg4">
+  <div class="st"><div class="sv" style="color:var(--accent)">${all.length}</div><div class="sl">Нийт заавар</div></div>
+  <div class="st"><div class="sv" style="color:var(--hb)">${all.filter(i=>i.type==='habea').length}</div><div class="sl">HABEA заавар</div></div>
+  <div class="st"><div class="sv" style="color:var(--green)">${totalAcks}</div><div class="sl">Нийт хүлээн авалт</div></div>
+  <div class="st"><div class="sv" style="color:var(--amber)">${pct}%</div><div class="sl">Нийт хамрагдалт</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+  <div class="card">
+    <div class="ct">Өнөөдрийн байдал — ${today()}</div>
+    ${todayAll.length===0?'<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Өнөөдрийн заавар байхгүй</div>':
+    todayAll.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;return `
+      <div style="margin-bottom:10px">${tBadge(i.type,i.everyday)}
+        <div style="font-size:12px;color:var(--text);margin:4px 0 2px;line-height:1.5">${i.text.length>60?i.text.slice(0,60)+'…':i.text}</div>
+        <div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${cnt}/${tot}</div>
+        <div class="prog"><div class="pf" style="width:${tot?Math.round(cnt/tot*100):0}%;background:${cnt===tot?'var(--green)':'var(--accent)'}"></div></div>
+      </div>`;}).join('')}
+  </div>
+  <div class="card">
+    <div class="ct">Ажилтнуудын хамрагдалт (өнөөдөр)</div>
+    <div style="max-height:280px;overflow-y:auto">
+    ${ws.slice(0,15).map(w=>{
+      const tk=todayAll.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
+      const p2=todayAll.length?Math.round(tk/todayAll.length*100):0;
+      return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text2);flex-shrink:0">${w.name[0]}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px">${w.name} <span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${p2}%</span></div>
+          <div class="prog"><div class="pf" style="width:${p2}%;background:${p2===100?'var(--green)':'var(--accent)'}"></div></div>
+        </div>
+      </div>`;}).join('')}
+    ${ws.length>15?`<div style="font-size:10px;color:var(--text3);text-align:center;padding:6px">+${ws.length-15} ажилтан...</div>`:''}
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div class="ct" style="margin-bottom:0">Сүүлийн заавруудыг харах</div>
+    <button class="btn btnsm" onclick="navigate('tracking')">Бүгдийг харах →</button>
+  </div>
+  <div class="tw" style="max-height:300px"><table>
+    <thead><tr><th style="width:110px">Огноо/Горим</th><th style="width:90px">Төрөл</th><th>Агуулга</th><th style="width:65px">Авсан</th><th style="width:110px">Байдал</th></tr></thead>
+    <tbody>${sorted.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
+      return `<tr>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Байнга':i.date}</td>
+        <td>${tBadge(i.type,false)}</td>
+        <td class="tdm" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.text}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${cnt}/${tot}</td>
+        <td><span class="badge ${cnt===tot?'bgg':cnt>0?'bga':'bgr'}">${cnt===tot?'Бүгд авсан':cnt>0?'Хэсэгчлэн':'Аваагүй'}</span></td>
+      </tr>`;}).join('')}</tbody>
+  </table></div>
+</div>`;
+}
+
+// ============================================================
+// ADMIN — HABEA DASHBOARD
+// ============================================================
+function rHabeaDB(){
+  const ws=workers();
+  const hi=[...DB.instructions].filter(i=>i.type==='habea').sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const todH=hi.filter(i=>activeToday(i));
+  let totalAcks=0;hi.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))totalAcks++;}));
+  const poss=hi.length*ws.length,pct=poss?Math.round(totalAcks/poss*100):0;
+
+  return `
+<div class="hbhdr">
+  <div class="hbico">🔷</div>
+  <div style="flex:1"><div class="hbttl">HABEA Зааварчилгааны самбар</div><div class="hbsub">HABEA ангиллын бүх зааварчилгааны хяналт, статистик, гарын үсэг</div></div>
+  <button class="btn btnh btnsm" onclick="navigate('add-instr')">+ HABEA нэмэх</button>
+</div>
+<div class="sg sg4">
+  <div class="st"><div class="sv" style="color:var(--hb)">${hi.length}</div><div class="sl">Нийт HABEA заавар</div></div>
+  <div class="st"><div class="sv" style="color:var(--ev)">${hi.filter(i=>i.everyday).length}</div><div class="sl">Өдөр бүр давтагдах</div></div>
+  <div class="st"><div class="sv" style="color:var(--amber)">${pct}%</div><div class="sl">Нийт хамрагдалт</div></div>
+  <div class="st"><div class="sv" style="color:${todH.length>0?'var(--green)':'var(--text3)'}">${todH.length}</div><div class="sl">Өнөөдрийн HABEA</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+  <div class="card" style="border-color:var(--hbbd)">
+    <div class="ct" style="color:var(--hb)">Ажилтан тус бүрийн HABEA хамрагдалт</div>
+    <div style="max-height:340px;overflow-y:auto">
+    ${ws.map(w=>{
+      const tk=hi.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0),tot=hi.length,p2=tot?Math.round(tk/tot*100):0;
+      return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--hbbg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--hb);flex-shrink:0">${w.name[0]}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px">${w.name} <span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${tk}/${tot} · ${p2}%</span></div>
+          <div class="prog"><div class="pf" style="width:${p2}%;background:${p2===100?'var(--green)':'var(--hb)'}"></div></div>
+        </div>
+        <span class="badge ${p2===100?'bgg':p2>0?'bgh':'bgr'}" style="font-size:9px;flex-shrink:0">${p2===100?'✔':'…'}</span>
+      </div>`;}).join('')}
+    </div>
+  </div>
+  <div class="card" style="border-color:var(--hbbd)">
+    <div class="ct" style="color:var(--hb)">Өнөөдрийн HABEA байдал</div>
+    ${todH.length===0?'<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Өнөөдрийн HABEA байхгүй</div>':
+    todH.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
+      return `<div style="margin-bottom:10px;padding:10px;background:var(--hbbg);border:1px solid var(--hbbd);border-radius:var(--rs)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          ${i.everyday?'<span class="badge bgev">🔄 Өдөр бүр</span>':'<span style="font-size:10px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace">'+i.date+'</span>'}
+          <span class="badge ${cnt===tot?'bgg':cnt>0?'bgh':'bgr'}">${cnt}/${tot}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text);line-height:1.5">${i.text.length>80?i.text.slice(0,80)+'…':i.text}</div>
+        <div class="prog" style="margin-top:6px"><div class="pf" style="width:${tot?Math.round(cnt/tot*100):0}%;background:${cnt===tot?'var(--green)':'var(--hb)'}"></div></div>
+      </div>`;}).join('')}
+  </div>
+</div>
+<div class="card" style="border-color:var(--hbbd)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div class="ct" style="margin-bottom:0;color:var(--hb)">Бүх HABEA зааврын дэлгэрэнгүй — гарын үсэг харах</div>
+    <button class="expbtn" onclick="exportExcel()">📊 Excel</button>
+  </div>
+  ${hi.length===0?'<div style="text-align:center;padding:24px;color:var(--text3);font-size:12px">HABEA заавар байхгүй</div>':
+  hi.map(i=>detailRow(i,ws)).join('')}
+</div>`;
+}
+
+function detailRow(i,ws){
+  const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
+  return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Өдөр бүр':i.date}</span>
+          ${tBadge(i.type,i.everyday)}
+        </div>
+        <div style="font-size:12px;color:var(--text);line-height:1.6">${i.text}</div>
+      </div>
+      <div style="display:flex;gap:5px;align-items:center;flex-shrink:0">
+        <span class="badge ${cnt===tot?'bgg':cnt>0?'bga':'bgr'}">${cnt}/${tot}</span>
+        <button class="btn btnsm" onclick="openEI(${i.id})">Засах</button>
+        <button class="btn btnsm btnd" onclick="delInstr(${i.id})">Устгах</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${ws.map(w=>{const ack=getAck(i,w.id);
+        if(ack) return `<div style="background:var(--gbg);border:1px solid var(--gbd);border-radius:5px;padding:4px 9px;display:flex;align-items:center;gap:6px">
+          <span style="font-size:11px;color:var(--green);font-weight:500">${w.name} ✔</span>
+          <span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${ack.datetime||ack.time}</span>
+          ${ack.sig?`<img class="sth" src="${ack.sig}" onclick="viewSig('${ack.sig}','${w.name}')">`:'<span style="font-size:9px;color:var(--text3);font-style:italic">гарын үсэггүй</span>'}
+        </div>`;
+        return `<span class="badge bgr">${w.name} ✘</span>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ============================================================
+// ADMIN — ADD INSTRUCTION
+// ============================================================
+function rAddInstr(){
+  const ws=workers();
+  return `
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
+  <div class="card">
+    <div class="ct">Шинэ заавар нэмэх</div>
+
+    <!-- EVERYDAY TOGGLE -->
+    <div class="togwrap" id="evTog" onclick="toggleEv()">
+      <div class="tog" id="evSw"></div>
+      <div><div class="toglbl">Өдөр бүр байнга давтагдах</div><div class="togsub" id="evSub">Унтарсан — нэг удааны огноо сонгоно</div></div>
+    </div>
+    <div id="nDateW" style="margin-bottom:10px"><label class="lbl">Огноо</label><input class="fi" id="nDate" type="date" value="${today()}" style="width:100%"></div>
+    <div class="fr2" style="margin-bottom:10px">
+      <div><label class="lbl">Төрөл</label>
+        <select class="fi" id="nType">
+          <option value="general">Ерөнхий заавар</option>
+          <option value="habea">🔷 HABEA заавар</option>
+          <option value="urgent">🚨 Яаралтай</option>
+        </select></div>
+      <div><!-- spacer --></div>
+    </div>
+    <div style="margin-bottom:14px">
+      <label class="lbl">Хэнд илгээх</label>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0;border-bottom:1px solid var(--border);margin-bottom:6px">
+          <input type="checkbox" id="targAll" onchange="targAllChg()" checked style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer">
+          <span style="font-size:12px;font-weight:600;color:var(--text)">Бүх ажилтан</span>
+          <span class="badge bgb" style="font-size:9px;margin-left:auto">${ws.length} хүн</span>
+        </label>
+        <div id="targList" style="display:none;max-height:160px;overflow-y:auto">
+          ${ws.map(w=>`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
+            <input type="checkbox" class="targCb" value="${w.id}" onchange="targCbChg()" style="accent-color:var(--accent);width:13px;height:13px;cursor:pointer">
+            <span style="font-size:12px;color:var(--text)">${w.name}</span>
+            ${w.profession?`<span style="font-size:10px;color:var(--text3)">· ${w.profession}</span>`:''}
+          </label>`).join('')}
+        </div>
+        <div id="targSummary" style="font-size:10px;color:var(--text3);margin-top:4px;display:none"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px"><label class="lbl">Зааврын агуулга</label><textarea class="fta" id="nText" placeholder="Ажлын зааврыг энд бичнэ үү..."></textarea></div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btnp" onclick="addInstr()">Нийтлэх</button>
+      <button class="btn" onclick="document.getElementById('nText').value=''">Цэвэрлэх</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Байнга давтагдах заавруудыг засах <span class="badge bgev" style="font-size:9px">🔄 EVERYDAY</span></div>
+    ${evList()}
+  </div>
+</div>
+<div class="card" style="margin-top:14px">
+  <div class="ct">Нийтлэгдсэн бүх заавруудыг засах / устгах</div>
+  ${instrTbl()}
+</div>`;
+}
+
+function evList(){
+  const ev=DB.instructions.filter(i=>i.everyday).sort((a,b)=>a.type.localeCompare(b.type));
+  if(!ev.length) return '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">Байнга давтагдах заавар байхгүй</div>';
+  return ev.map(i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:flex-start;gap:8px">
+      <div style="flex:1;min-width:0">${tBadge(i.type,true)}<div style="font-size:12px;color:var(--text);line-height:1.5;margin-top:4px">${i.text.length>80?i.text.slice(0,80)+'…':i.text}</div></div>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button class="btn btnsm" onclick="openEI(${i.id})">Засах</button>
+        <button class="btn btnsm btnd" onclick="delInstr(${i.id})">Устгах</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+function instrTbl(){
+  const ws=workers();
+  const all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const fil=iSrch?all.filter(i=>i.text.toLowerCase().includes(iSrch)||tLabel(i.type).toLowerCase().includes(iSrch)):all;
+  const tp=Math.ceil(fil.length/IPP),pg=Math.min(iPage,tp||1);
+  const sl=fil.slice((pg-1)*IPP,pg*IPP);
+  return `<div class="srow"><input class="si" placeholder="Заавар хайх..." value="${iSrch}" oninput="iSrch=this.value.toLowerCase();iPage=1;navigate('add-instr')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length} заавар</span></div>
+<div class="tw" style="max-height:380px"><table>
+  <thead><tr><th style="width:110px">Огноо/Горим</th><th style="width:80px">Төрөл</th><th>Агуулга</th><th style="width:100px">Хэнд</th><th style="width:60px">Авсан</th><th style="width:95px">Үйлдэл</th></tr></thead>
+  <tbody>${sl.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0);
+    return `<tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Байнга':i.date}</td>
+      <td>${tBadge(i.type,false)}</td>
+      <td class="tdm" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.text}</td>
+      <td>${targLabel(i)}</td>
+      <td><span class="badge ${cnt===ws.length?'bgg':'bga'}">${cnt}/${ws.length}</span></td>
+      <td><div style="display:flex;gap:4px"><button class="btn btnsm" onclick="openEI(${i.id})">Засах</button><button class="btn btnsm btnd" onclick="delInstr(${i.id})">Устгах</button></div></td>
+    </tr>`;}).join('')}</tbody>
+</table></div>
+${pagCtrl(pg,tp,'iPage','add-instr',fil.length)}`;
+}
+
+function toggleEv(){
+  everyOn=!everyOn;
+  const sw=document.getElementById('evSw'),sub=document.getElementById('evSub'),dw=document.getElementById('nDateW');
+  if(everyOn){sw.classList.add('on','honn');sub.textContent='Идэвхтэй — өдөр бүр бүх ажилтанд харагдана';dw.style.display='none';}
+  else{sw.classList.remove('on','honn');sub.textContent='Унтарсан — нэг удааны огноо сонгоно';dw.style.display='block';}
+}
+
+function targAllChg(){
+  const allCb=document.getElementById('targAll');
+  const list=document.getElementById('targList');
+  const sum=document.getElementById('targSummary');
+  list.style.display=allCb.checked?'none':'block';
+  sum.style.display=allCb.checked?'none':'block';
+  if(allCb.checked){
+    document.querySelectorAll('.targCb').forEach(c=>c.checked=false);
+    sum.textContent='';
+  }
+}
+function targCbChg(){
+  const checked=[...document.querySelectorAll('.targCb:checked')];
+  const allCb=document.getElementById('targAll');
+  const ws=workers();
+  if(checked.length===0){allCb.checked=true;targAllChg();return;}
+  allCb.checked=false;
+  const names=checked.map(c=>ws.find(w=>w.id===Number(c.value))?.name||'').filter(Boolean);
+  const sum=document.getElementById('targSummary');
+  sum.style.display='block';
+  sum.textContent='Сонгогдсон: '+names.join(', ');
+}
+function getTargets(){
+  const allCb=document.getElementById('targAll');
+  if(!allCb||allCb.checked) return 'all';
+  const checked=[...document.querySelectorAll('.targCb:checked')].map(c=>Number(c.value));
+  return checked.length===0?'all':checked;
+}
+
+function addInstr(){
+  const txt=document.getElementById('nText').value.trim();
+  const dt=everyOn?null:document.getElementById('nDate').value;
+  const type=document.getElementById('nType').value;
+  const targets=getTargets();
+  if(!txt){showToast('Зааврын агуулга хоосон байна!');return;}
+  if(!everyOn&&!dt){showToast('Огноо сонгоно уу!');return;}
+  DB=loadDB();
+  DB.instructions.push({id:Date.now(),date:dt,everyday:everyOn,type,text:txt,createdBy:CU.id,targets,acks:{}});
+  saveDB(DB);everyOn=false;
+  notifyNI(txt.slice(0,50),type);
+  showToast('Заавар нийтлэгдлээ!',type==='habea'?'h':'g');
+  navigate('add-instr');
+}
+
+function delInstr(id){
+  if(!confirm('Энэ зааврыг устгах уу?'))return;
+  DB=loadDB();DB.instructions=DB.instructions.filter(i=>i.id!==id);saveDB(DB);
+  showToast('Устгагдлаа');
+  navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'add-instr');
+}
+
+// ── Edit Instr Modal ──
+function eiTargAllChg(){
+  const allCb=document.getElementById('eiTargAll');
+  document.querySelectorAll('.eiTargCb').forEach(c=>c.checked=false);
+  document.getElementById('eiTargList').style.opacity=allCb.checked?'.4':'1';
+  document.getElementById('eiTargList').style.pointerEvents=allCb.checked?'none':'auto';
+}
+function getEiTargets(){
+  const allCb=document.getElementById('eiTargAll');
+  if(!allCb||allCb.checked) return 'all';
+  const checked=[...document.querySelectorAll('.eiTargCb:checked')].map(c=>Number(c.value));
+  return checked.length===0?'all':checked;
+}
+function openEI(id){
+  DB=loadDB();const i=DB.instructions.find(x=>x.id===id);if(!i)return;
+  const ws=workers();
+  document.getElementById('eiId').value=id;
+  document.getElementById('eiType').value=i.type||'general';
+  document.getElementById('eiMode').value=i.everyday?'every':'once';
+  document.getElementById('eiDate').value=i.date||today();
+  document.getElementById('eiText').value=i.text;
+  // Build checkboxes
+  const list=document.getElementById('eiTargList');
+  list.innerHTML=ws.map(w=>`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
+    <input type="checkbox" class="eiTargCb" value="${w.id}" style="accent-color:var(--accent);width:13px;height:13px;cursor:pointer">
+    <span style="font-size:12px;color:var(--text)">${w.name}</span>
+    ${w.profession?`<span style="font-size:10px;color:var(--text3)">· ${w.profession}</span>`:''}
+  </label>`).join('');
+  // Set checked state
+  const allCb=document.getElementById('eiTargAll');
+  if(i.targets==='all'){
+    allCb.checked=true;list.style.opacity='.4';list.style.pointerEvents='none';
+  } else {
+    allCb.checked=false;list.style.opacity='1';list.style.pointerEvents='auto';
+    const ids=Array.isArray(i.targets)?i.targets:[Number(i.targets)];
+    document.querySelectorAll('.eiTargCb').forEach(c=>{c.checked=ids.includes(Number(c.value));});
+  }
+  eiModeChg();
+  document.getElementById('eiModal').classList.add('open');
+}
+function eiModeChg(){document.getElementById('eiDW').style.display=document.getElementById('eiMode').value==='every'?'none':'block';}
+function closeEI(){document.getElementById('eiModal').classList.remove('open');}
+function saveEI(){
+  const id=Number(document.getElementById('eiId').value);
+  const type=document.getElementById('eiType').value;
+  const every=document.getElementById('eiMode').value==='every';
+  const dt=every?null:document.getElementById('eiDate').value;
+  const txt=document.getElementById('eiText').value.trim();
+  const targets=getEiTargets();
+  if(!txt){showToast('Агуулга хоосон байна!');return;}
+  if(!every&&!dt){showToast('Огноо сонгоно уу!');return;}
+  DB=loadDB();const i=DB.instructions.find(x=>x.id===id);if(!i)return;
+  i.type=type;i.everyday=every;i.date=dt;i.text=txt;i.targets=targets;
+  saveDB(DB);closeEI();
+  showToast('Хадгалагдлаа!',type==='habea'?'h':'g');
+  navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'add-instr');
+}
+
+// ============================================================
+// ADMIN — TRACKING
+// ============================================================
+function rTracking(){
+  const ws=workers();
+  const all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const fil=iSrch?all.filter(i=>i.text.toLowerCase().includes(iSrch)):all;
+  const tp=Math.ceil(fil.length/IPP),pg=Math.min(iPage,tp||1);
+  const sl=fil.slice((pg-1)*IPP,pg*IPP);
+
+  return `
+<div class="card" style="margin-bottom:12px">
+  <div class="ct">Ажилтан тус бүрийн нийт дүн</div>
+  <div class="srow"><input class="si" placeholder="Ажилтан хайх..." value="${wSrch}" oninput="wSrch=this.value.toLowerCase();navigate('tracking')"></div>
+  <div class="tw" style="max-height:320px"><table>
+    <thead><tr><th>Ажилтан</th><th style="width:60px">Авсан</th><th style="width:60px">Аваагүй</th><th style="width:130px">Хувь</th><th style="width:80px">HABEA</th><th style="width:100px">Байдал</th></tr></thead>
+    <tbody>${ws.filter(w=>!wSrch||w.name.toLowerCase().includes(wSrch)).map(w=>{
+      const tk=all.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0),tot=all.length,ms=tot-tk,p2=tot?Math.round(tk/tot*100):0;
+      const hbtk=all.filter(i=>i.type==='habea').reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
+      const hbtot=all.filter(i=>i.type==='habea').length;
+      return `<tr>
+        <td class="tdm">${w.name}</td>
+        <td style="color:var(--green);font-family:'IBM Plex Mono',monospace">${tk}</td>
+        <td style="color:${ms>0?'var(--red)':'var(--text3)'};font-family:'IBM Plex Mono',monospace">${ms}</td>
+        <td><div style="display:flex;align-items:center;gap:7px">
+          <div style="width:52px;background:var(--bg5);height:4px;border-radius:2px;overflow:hidden"><div style="width:${p2}%;height:100%;background:${p2===100?'var(--green)':'var(--accent)'}"></div></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px">${p2}%</span>
+        </div></td>
+        <td><span class="badge bgh">${hbtk}/${hbtot}</span></td>
+        <td><span class="badge ${p2===100?'bgg':p2>0?'bga':'bgr'}">${p2===100?'Бүрэн':p2>0?'Хэсэгчлэн':'Аваагүй'}</span></td>
+      </tr>`;}).join('')}</tbody>
+  </table></div>
+</div>
+<div class="card">
+  <div class="ct">Заавар тус бүрийн дэлгэрэнгүй</div>
+  <div class="srow"><input class="si" placeholder="Заавар хайх..." value="${iSrch}" oninput="iSrch=this.value.toLowerCase();iPage=1;navigate('tracking')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length} заавар</span></div>
+  ${sl.map(i=>detailRow(i,ws)).join('')}
+  ${pagCtrl(pg,tp,'iPage','tracking',fil.length)}
+</div>`;
+}
+
+// ============================================================
+// ADMIN — REPORT
+// ============================================================
+function rReport(){
+  const ws=workers(),all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const hi=all.filter(i=>i.type==='habea');
+  let totalAcks=0;all.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))totalAcks++;}));
+  let haAcks=0;hi.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))haAcks++;}));
+  const poss=all.length*ws.length,hposs=hi.length*ws.length;
+  return `
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+  <div class="card">
+    <div class="ct">Тайлангийн мэдээлэл</div>
+    <div style="font-size:12px;color:var(--text2);line-height:2">
+      Нийт заавар: <strong style="color:var(--text)">${all.length}</strong> (Ерөнхий: ${all.filter(i=>i.type==='general').length}, HABEA: ${hi.length}, Яаралтай: ${all.filter(i=>i.type==='urgent').length})<br>
+      Өдөр бүр давтагдах: <strong style="color:var(--ev)">${all.filter(i=>i.everyday).length}</strong><br>
+      Нийт ажилтан: <strong style="color:var(--text)">${ws.length}</strong><br>
+      Нийт хүлээн авалт: <strong style="color:var(--green)">${totalAcks}</strong> / ${poss}<br>
+      Нийт хамрагдалт: <strong style="color:var(--amber)">${poss?Math.round(totalAcks/poss*100):0}%</strong><br>
+      HABEA хамрагдалт: <strong style="color:var(--hb)">${hposs?Math.round(haAcks/hposs*100):0}%</strong>
+    </div>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px">
+    <div class="ct">Excel файл татаж авах</div>
+    <p style="font-size:12px;color:var(--text2)">5 хуудас бүхий .xlsx тайлан. HABEA болон өдөр бүр тусдаа хуудас.</p>
+    <button class="expbtn" onclick="exportExcel()">📥 Excel татаж авах (.xlsx)</button>
+    <div style="font-size:10px;color:var(--text3);line-height:1.9">
+      📋 Хуудас 1: Дэлгэрэнгүй жагсаалт<br>🔷 Хуудас 2: HABEA тайлан<br>📊 Хуудас 3: Ажилтан хураангуй<br>📅 Хуудас 4: Заавар хураангуй<br>🔄 Хуудас 5: Өдөр бүр давтагдах
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div class="ct" style="margin-bottom:0">Урьдчилан харах (эхний 10×8)</div>
+    <button class="expbtn" onclick="exportExcel()" style="font-size:11px;padding:5px 11px">📥 Татах</button>
+  </div>
+  <div class="tw" style="max-height:380px"><table>
+    <thead><tr><th style="width:90px">Огноо</th><th style="width:75px">Төрөл</th><th>Заавар</th><th style="width:80px">Ажилтан</th><th style="width:70px">Авсан</th><th style="width:110px">Огноо цаг</th></tr></thead>
+    <tbody>${all.slice(0,10).flatMap(i=>ws.slice(0,8).map(w=>{const ack=getAck(i,w.id);
+      return `<tr>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄':i.date}</td>
+        <td>${tBadge(i.type,false)}</td>
+        <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)">${i.text.length>38?i.text.slice(0,38)+'…':i.text}</td>
+        <td class="tdm">${w.name}</td>
+        <td><span class="badge ${ack?'bgg':'bgr'}">${ack?'Авсан':'Аваагүй'}</span></td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${ack?ack.datetime||ack.time:'—'}</td>
+      </tr>`;})).join('')}</tbody>
+  </table></div>
+</div>`;
+}
+
+// ============================================================
+// ADMIN — WORKERS (paginated + search)
+// ============================================================
+function rWorkers(){
+  const ws=workers();
+  const fil=wSrch?ws.filter(w=>w.name.toLowerCase().includes(wSrch)||w.username.toLowerCase().includes(wSrch)):ws;
+  const tp=Math.ceil(fil.length/WPP),pg=Math.min(wPage,tp||1);
+  const sl=fil.slice((pg-1)*WPP,pg*WPP);
+  return `<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="ct" style="margin-bottom:0">Бүртгэлтэй ажилтнууд (${ws.length})</div>
+    </div>
+    <div class="srow"><input class="si" placeholder="Нэр, нэвтрэх нэрээр хайх..." value="${wSrch}" oninput="wSrch=this.value.toLowerCase();wPage=1;navigate('workers')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length}</span></div>
+    <div class="tw" style="max-height:500px"><table>
+      <thead><tr><th style="width:36px">#</th><th>Нэр</th><th style="width:110px">Нэвтрэх нэр</th><th style="width:140px">Мэргэжил</th><th style="width:100px">Утас</th><th style="width:80px">Авсан/Нийт</th><th style="width:70px">HABEA</th></tr></thead>
+      <tbody>${sl.map((w,idx)=>{
+        const tk=DB.instructions.filter(i=>getAck(i,w.id));
+        const hbtk=DB.instructions.filter(i=>i.type==='habea'&&getAck(i,w.id)).length;
+        const hbtot=DB.instructions.filter(i=>i.type==='habea').length;
+        return `<tr>
+          <td style="color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:10px">${(pg-1)*WPP+idx+1}</td>
+          <td class="tdm">${w.name}</td>
+          <td style="font-family:'IBM Plex Mono',monospace;color:var(--text3);font-size:11px">${w.username}</td>
+          <td style="font-size:11px;color:var(--text2)">${w.profession||'<span style="color:var(--text3)">—</span>'}</td>
+          <td style="font-size:11px;color:var(--text2);font-family:'IBM Plex Mono',monospace">${w.phone||'<span style="color:var(--text3)">—</span>'}</td>
+          <td><span class="badge bgb">${tk.length}/${DB.instructions.length}</span></td>
+          <td><span class="badge bgh">${hbtk}/${hbtot}</span></td>
+        </tr>`;}).join('')}</tbody>
+    </table></div>
+    ${pagCtrl(pg,tp,'wPage','workers',fil.length)}
+  </div>`;
+}
+
+// ============================================================
+// ADMIN — MANAGE USERS (paginated + search)
+// ============================================================
+function rMU(){
+  const all=DB.users;
+  const fil=wSrch?all.filter(u=>u.name.toLowerCase().includes(wSrch)||u.username.toLowerCase().includes(wSrch)):all;
+  const tp=Math.ceil(fil.length/WPP),pg=Math.min(wPage,tp||1);
+  const sl=fil.slice((pg-1)*WPP,pg*WPP);
+  return `
+<div style="display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start">
+  <div class="card">
+    <div class="ct">Шинэ хэрэглэгч нэмэх</div>
+    <div style="margin-bottom:9px"><label class="lbl">Бүтэн нэр</label><input class="fi" id="nuNm" type="text"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Нэвтрэх нэр</label><input class="fi" id="nuUsr" type="text" autocomplete="off"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Нууц үг</label><input class="fi" id="nuPw" type="text" autocomplete="off"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Мэргэжил / Албан тушаал</label><input class="fi" id="nuProf" type="text"></div>
+    <div style="margin-bottom:9px"><label class="lbl">Утасны дугаар</label><input class="fi" id="nuPhone" type="tel"></div>
+    <div style="margin-bottom:14px"><label class="lbl">Эрх</label><select class="fi" id="nuRl"><option value="worker">Ажилтан</option><option value="admin">Админ</option></select></div>
+    <div class="ferr" id="nuErr"></div>
+    <button class="btn btnp" style="width:100%" onclick="addUser()">Нэмэх →</button>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="ct" style="margin-bottom:0">Бүх хэрэглэгчид (${all.length})</div>
+    </div>
+    <div class="srow"><input class="si" placeholder="Нэр, нэвтрэх нэрээр хайх..." value="${wSrch}" oninput="wSrch=this.value.toLowerCase();wPage=1;navigate('mu')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length}</span></div>
+    <div style="max-height:450px;overflow-y:auto">
+    ${sl.map(u=>{const isSelf=u.id===CU.id;return `
+      <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)">
+        <div style="width:32px;height:32px;border-radius:50%;background:${u.role==='admin'?'var(--accent-glow)':'var(--bg4)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${u.role==='admin'?'var(--accent)':'var(--text2)'};flex-shrink:0">${u.name[0]}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:500;color:var(--text)">${u.name}${isSelf?' <span style="font-size:10px;color:var(--text3)">(та)</span>':''}</div>
+          <div style="font-size:10px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace;margin-top:1px">${u.username} · <span class="badge ${u.role==='admin'?'bgb':'bgg'}" style="font-size:9px">${u.role==='admin'?'Админ':'Ажилтан'}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap">
+            ${u.profession?`<span style="font-size:10px;color:var(--text2);display:inline-flex;align-items:center;gap:3px">💼 ${u.profession}</span>`:''}
+            ${u.phone?`<span style="font-size:10px;color:var(--text2);display:inline-flex;align-items:center;gap:3px">📞 ${u.phone}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          <button class="btn btnsm" onclick="openEU(${u.id})">Засах</button>
+          ${!isSelf?`<button class="btn btnsm btnd" onclick="delUser(${u.id})">Устгах</button>`:''}
+        </div>
+      </div>`;}).join('')}
+    </div>
+    ${pagCtrl(pg,tp,'wPage','mu',fil.length)}
+  </div>
+</div>`;
+}
+
+function addUser(){
+  DB=loadDB();
+  const name=document.getElementById('nuNm').value.trim();
+  const username=document.getElementById('nuUsr').value.trim();
+  const password=document.getElementById('nuPw').value.trim();
+  const profession=document.getElementById('nuProf').value.trim();
+  const phone=document.getElementById('nuPhone').value.trim();
+  const role=document.getElementById('nuRl').value;
+  const err=document.getElementById('nuErr');
+  if(!name||!username||!password){err.textContent='Нэр, нэвтрэх нэр, нууц үг шаардлагатай!';return;}
+  if(DB.users.find(u=>u.username===username)){err.textContent='Нэвтрэх нэр аль хэдийн бүртгэлтэй!';return;}
+  err.textContent='';
+  DB.users.push({id:Date.now(),name,username,password,role,profession,phone});
+  saveDB(DB);showToast(name+' нэмэгдлээ!','g');navigate('mu');
+}
+function delUser(id){
+  DB=loadDB();const u=DB.users.find(x=>x.id===id);if(!u)return;
+  if(!confirm(u.name+'-г устгах уу?'))return;
+  DB.users=DB.users.filter(x=>x.id!==id);
+  DB.instructions.forEach(i=>{Object.keys(i.acks).filter(k=>k===String(id)||k.endsWith('_'+id)).forEach(k=>delete i.acks[k]);});
+  saveDB(DB);showToast(u.name+' устгагдлаа');navigate('mu');
+}
+function openEU(id){
+  DB=loadDB();const u=DB.users.find(x=>x.id===id);if(!u)return;
+  document.getElementById('euId').value=id;document.getElementById('euNm').value=u.name;
+  document.getElementById('euUsr').value=u.username;document.getElementById('euPw').value='';
+  document.getElementById('euProf').value=u.profession||'';
+  document.getElementById('euPhone').value=u.phone||'';
+  document.getElementById('euRl').value=u.role;document.getElementById('euErr').textContent='';
+  document.getElementById('euModal').classList.add('open');
+}
+function closeEU(){document.getElementById('euModal').classList.remove('open');}
+function saveEU(){
+  DB=loadDB();
+  const id=Number(document.getElementById('euId').value);
+  const name=document.getElementById('euNm').value.trim();
+  const username=document.getElementById('euUsr').value.trim();
+  const password=document.getElementById('euPw').value.trim();
+  const profession=document.getElementById('euProf').value.trim();
+  const phone=document.getElementById('euPhone').value.trim();
+  const role=document.getElementById('euRl').value;
+  const err=document.getElementById('euErr');
+  if(!name||!username){err.textContent='Нэр болон нэвтрэх нэр шаардлагатай!';return;}
+  if(DB.users.find(u=>u.username===username&&u.id!==id)){err.textContent='Нэвтрэх нэр аль хэдийн бүртгэлтэй!';return;}
+  const u=DB.users.find(x=>x.id===id);if(!u)return;
+  u.name=name;u.username=username;u.role=role;u.profession=profession;u.phone=phone;
+  if(password)u.password=password;
+  if(CU.id===id){CU.name=name;CU.username=username;CU.role=role;}
+  saveDB(DB);closeEU();showToast('Хадгалагдлаа!','g');navigate('mu');
+}
+
+// ============================================================
+// PAGINATION HELPER
+// ============================================================
+function pagCtrl(cur,total,varName,page,tot){
+  if(total<=1)return '';
+  const w=Math.min(total,7);let s=Math.max(1,cur-3),e=Math.min(total,s+w-1);
+  if(e-s<w-1)s=Math.max(1,e-w+1);
+  let b='';
+  if(s>1)b+=`<button class="pb" onclick="${varName}=1;navigate('${page}')">1</button>${s>2?'<span style="color:var(--text3);font-size:10px;padding:0 2px">…</span>':''}`;
+  for(let p=s;p<=e;p++)b+=`<button class="pb${p===cur?' cur':''}" onclick="${varName}=${p};navigate('${page}')">${p}</button>`;
+  if(e<total)b+=`${e<total-1?'<span style="color:var(--text3);font-size:10px;padding:0 2px">…</span>':''}<button class="pb" onclick="${varName}=${total};navigate('${page}')">${total}</button>`;
+  return `<div class="pag">
+    ${cur>1?`<button class="pb" onclick="${varName}=${cur-1};navigate('${page}')">←</button>`:''}
+    ${b}
+    ${cur<total?`<button class="pb" onclick="${varName}=${cur+1};navigate('${page}')">→</button>`:''}
+    <span class="pinfo">${(cur-1)*WPP+1}–${Math.min(cur*WPP,tot)} / ${tot}</span>
+  </div>`;
+}
+
+// ============================================================
+// WORKER — TODAY (general only)
+// ============================================================
+function rToday(){
+  const uid=CU.id;
+  const gen=DB.instructions.filter(i=>i.type!=='habea'&&activeToday(i)&&targMatch(i,uid));
+  const unread=[...DB.instructions].filter(i=>i.type!=='habea'&&!getAck(i,uid)&&targMatch(i,uid)&&!activeToday(i)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'))[0];
+  let html='';
+  if(unread){
+    html+=`<div style="background:var(--abg);border:1px solid var(--abd);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px;flex-shrink:0">⚠️</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:1px">Аваагүй заавар байна — ${unread.date||'Байнга'}</div>
+        <div style="font-size:11px;color:var(--text2)">${unread.text.length>80?unread.text.slice(0,80)+'…':unread.text}</div>
+      </div>
+      <button class="btn btnsm" onclick="navigate('history')">Харах →</button>
+    </div>`;
+  }
+  if(!gen.length){
+    html+=`<div style="text-align:center;padding:60px 20px;color:var(--text3)"><div style="font-size:28px;margin-bottom:10px;opacity:.5">☀️</div><div style="font-size:13px">Өнөөдрийн ерөнхий заавар байхгүй</div><div style="font-size:11px;margin-top:4px">${today()}</div></div>`;
+    return html;
+  }
+  html+=gen.map(i=>wCard(i,uid)).join('');
+  return html;
+}
+
+// ============================================================
+// WORKER — HABEA (tусдаа dashboard)
+// ============================================================
+function rHabeaW(){
+  const uid=CU.id;
+  const hi=DB.instructions.filter(i=>i.type==='habea'&&targMatch(i,uid)).sort((a,b)=>{
+    if(a.everyday&&!b.everyday)return -1;if(b.everyday&&!a.everyday)return 1;
+    return (b.date||'9999').localeCompare(a.date||'9999');
+  });
+  const todH=hi.filter(i=>activeToday(i));
+  const total=hi.length,taken=hi.reduce((s,i)=>s+(getAck(i,uid)?1:0),0);
+
+  let html=`
+<div class="hbhdr">
+  <div class="hbico">🔷</div>
+  <div style="flex:1"><div class="hbttl">HABEA Зааварчилгаа</div><div class="hbsub">Миний HABEA зааварчилгааны жагсаалт — өнөөдрийн болон өмнөх</div></div>
+  <div style="text-align:right"><div style="font-size:20px;font-weight:600;color:var(--hb);font-family:'IBM Plex Mono',monospace">${taken}/${total}</div><div style="font-size:10px;color:var(--text3)">хүлээн авсан</div></div>
+</div>`;
+
+  if(todH.length){
+    html+=`<div style="font-size:10px;font-weight:600;color:var(--hb);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Өнөөдрийн HABEA — ${today()}</div>`;
+    html+=todH.map(i=>wCard(i,uid)).join('');
+  }
+
+  const past=hi.filter(i=>!activeToday(i));
+  if(past.length){
+    html+=`<div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin:14px 0 8px">Өмнөх HABEA заавруудыг харах</div>`;
+    html+=past.map(i=>{const ack=getAck(i,uid);return `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)">
+        <div style="width:18px;height:18px;border-radius:50%;background:${ack?'var(--gbg)':'var(--rbg)'};display:flex;align-items:center;justify-content:center;font-size:9px;color:${ack?'var(--green)':'var(--red)'};flex-shrink:0;margin-top:2px">${ack?'✔':'✘'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">${tBadge(i.type,i.everyday)}<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--hb)">${i.date||'Байнга'}</span></div>
+          <div style="font-size:12px;color:var(--text);line-height:1.6">${i.text}</div>
+          ${ack?`<div style="font-size:10px;color:var(--green);margin-top:4px;font-family:'IBM Plex Mono',monospace">✔ Авсан: ${ack.datetime||ack.time}</div>`:'<div style="font-size:10px;color:var(--red);margin-top:4px">Аваагүй</div>'}
+        </div>
+        <span class="badge ${ack?'bgg':'bgr'}" style="flex-shrink:0">${ack?'Авсан':'Аваагүй'}</span>
+      </div>`;}).join('')}
+
+  if(!todH.length&&!past.length)html+='<div style="text-align:center;padding:60px 20px;color:var(--text3)"><div style="font-size:28px;margin-bottom:10px;opacity:.5">🔷</div><div style="font-size:13px">HABEA заавар байхгүй</div></div>';
+  return html;
+}
+
+function wCard(i,uid){
+  const acked=!!getAck(i,uid),ack=getAck(i,uid);
+  return `<div class="ic ${i.type==='habea'?'ichb':''}">
+    <div class="icmeta">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Өдөр бүр':i.date}</span>
+      ${tBadge(i.type,i.everyday)}
+      ${acked?'<span class="badge bgg">✔ Хүлээн авсан</span>':'<span class="badge bga">Хүлээлтэй</span>'}
+    </div>
+    <div class="icbody">${i.text}</div>
+    <div class="icfoot">
+      ${acked
+        ?`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div style="padding:6px 12px;background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--rs);color:var(--green);font-size:11px">✔ Хүлээн авлаа — ${ack.datetime||ack.time}</div>
+            ${ack.sig?`<img class="sth" src="${ack.sig}" onclick="viewSig('${ack.sig}','${CU.name}')" title="Гарын үсэг" style="height:30px;width:auto">`:'<span style="font-size:10px;color:var(--text3);font-style:italic">гарын үсэггүй</span>'}
+          </div>`
+        :`<button style="padding:8px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);cursor:pointer;font-size:12px;transition:all .15s;font-family:'IBM Plex Sans',sans-serif" onmouseover="this.style.background='var(--gbg)';this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.background='var(--bg3)';this.style.borderColor='var(--border2)';this.style.color='var(--text)'" onclick="openSigM(${i.id})">✍️ Гарын үсэг зурж хүлээн авах</button>`}
+    </div>
+  </div>`;
+}
+
+// ============================================================
+// WORKER — HISTORY (general only)
+// ============================================================
+function rHistory(){
+  const uid=CU.id;
+  const sorted=[...DB.instructions].filter(i=>i.type!=='habea'&&targMatch(i,uid)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const total=sorted.length,taken=sorted.reduce((s,i)=>s+(getAck(i,uid)?1:0),0);
+  return `
+<div class="sg sg3" style="margin-bottom:14px">
+  <div class="st"><div class="sv" style="color:var(--accent)">${total}</div><div class="sl">Нийт заавар</div></div>
+  <div class="st"><div class="sv" style="color:var(--green)">${taken}</div><div class="sl">Хүлээн авсан</div></div>
+  <div class="st"><div class="sv" style="color:${total-taken>0?'var(--red)':'var(--text3)'}">${total-taken}</div><div class="sl">Аваагүй</div></div>
+</div>
+<div class="card">
+  <div class="ct">Бүх ерөнхий зааврын жагсаалт</div>
+  ${sorted.map(i=>{const ack=getAck(i,uid);return `
+    <div style="display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid var(--border)">
+      <div style="width:18px;height:18px;border-radius:50%;background:${ack?'var(--gbg)':'var(--rbg)'};display:flex;align-items:center;justify-content:center;font-size:9px;color:${ack?'var(--green)':'var(--red)'};flex-shrink:0;margin-top:2px">${ack?'✔':'✘'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Байнга':i.date}</span>
+          ${tBadge(i.type,i.everyday)}
+        </div>
+        <div style="font-size:12px;color:var(--text);line-height:1.6">${i.text}</div>
+        ${ack?`<div style="display:flex;align-items:center;gap:9px;margin-top:6px">
+          <span style="font-size:10px;color:var(--green);font-family:'IBM Plex Mono',monospace">Авсан: ${ack.datetime||ack.time}</span>
+          ${ack.sig?`<img class="sth" src="${ack.sig}" onclick="viewSig('${ack.sig}','${CU.name}')">`:''}
+        </div>`:'<div style="font-size:10px;color:var(--red);margin-top:4px">Аваагүй</div>'}
+      </div>
+      <span class="badge ${ack?'bgg':'bgr'}" style="flex-shrink:0">${ack?'Авсан':'Аваагүй'}</span>
+    </div>`;}).join('')}
+</div>`;
+}
+
+// ============================================================
+// SIGNATURE PAD
+// ============================================================
+let sigCanvas,sigCtx,isDrawing=false,hasSig=false,lastX=0,lastY=0;
+function openSigM(id){
+  pendingSigId=id;
+  const i=DB.instructions.find(x=>x.id===id);
+  document.getElementById('sigSub').textContent=i?`"${i.text.slice(0,60)}${i.text.length>60?'…':''}"`:'' ;
+  document.getElementById('sigModal').classList.add('open');
+  setTimeout(initSP,50);
+}
+function initSP(){
+  sigCanvas=document.getElementById('sigCanvas');
+  const wrap=document.getElementById('sigWrap');
+  sigCanvas.width=wrap.clientWidth;sigCanvas.height=140;
+  sigCtx=sigCanvas.getContext('2d');
+  sigCtx.strokeStyle='#ededf0';sigCtx.lineWidth=2;sigCtx.lineCap='round';sigCtx.lineJoin='round';
+  hasSig=false;document.getElementById('sigPh').style.display='block';
+  sigCanvas.onmousedown=e=>{isDrawing=true;[lastX,lastY]=gp(e);};
+  sigCanvas.onmousemove=e=>{if(!isDrawing)return;dr(e);};
+  sigCanvas.onmouseup=()=>{isDrawing=false;sigCtx.beginPath();};
+  sigCanvas.onmouseleave=()=>{isDrawing=false;sigCtx.beginPath();};
+  sigCanvas.ontouchstart=e=>{e.preventDefault();isDrawing=true;[lastX,lastY]=gp(e.touches[0]);};
+  sigCanvas.ontouchmove=e=>{e.preventDefault();if(!isDrawing)return;dr(e.touches[0]);};
+  sigCanvas.ontouchend=()=>{isDrawing=false;sigCtx.beginPath();};
+}
+function gp(e){const r=sigCanvas.getBoundingClientRect();return[(e.clientX-r.left)*(sigCanvas.width/r.width),(e.clientY-r.top)*(sigCanvas.height/r.height)];}
+function dr(e){const [x,y]=gp(e);sigCtx.beginPath();sigCtx.moveTo(lastX,lastY);sigCtx.lineTo(x,y);sigCtx.stroke();[lastX,lastY]=[x,y];if(!hasSig){hasSig=true;document.getElementById('sigPh').style.display='none';}}
+function clearSig(){if(!sigCtx)return;sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);hasSig=false;document.getElementById('sigPh').style.display='block';}
+function closeSig(){document.getElementById('sigModal').classList.remove('open');pendingSigId=null;}
+function confirmSig(){
+  if(!hasSig){showToast('Гарын үсэг зурна уу!');return;}
+  const sig=sigCanvas.toDataURL('image/png');
+  DB=loadDB();const i=DB.instructions.find(x=>x.id===pendingSigId);if(!i){closeSig();return;}
+  setAck(i,CU.id,{time:nowTime(),datetime:nowDT(),sig});
+  saveDB(DB);closeSig();showToast('Амжилттай баталгаажуулав!','g');
+  navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'today');
+}
+function viewSig(src,name){document.getElementById('svT').textContent=name+' — гарын үсэг';document.getElementById('svI').src=src;document.getElementById('sigVM').classList.add('open');}
+function closeSV(){document.getElementById('sigVM').classList.remove('open');}
+document.addEventListener('click',e=>{
+  ['sigVM','sigModal','eiModal','euModal'].forEach(id=>{if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');});
+});
+
+// ============================================================
+// EXCEL EXPORT
+// ============================================================
+function exportExcel(){
+  DB=loadDB();
+  const ws_=workers();
+  const all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const hi=all.filter(i=>i.type==='habea');
+  const ev=all.filter(i=>i.everyday);
+
+  const mkR=(i,w)=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,tLabel(i.type),i.everyday?'Тийм':'Үгүй',i.text,w.name,ack?'Авсан':'Аваагүй',ack?(ack.datetime||ack.time):'—',ack&&ack.sig?'Байна':'Байхгүй'];};
+
+  const det=[['Огноо/Горим','Төрөл','Өдөр бүр?','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг','Гарын үсэг'],...all.flatMap(i=>ws_.map(w=>mkR(i,w)))];
+  const hdet=[['Огноо/Горим','Өдөр бүр?','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг','Гарын үсэг'],...hi.flatMap(i=>ws_.map(w=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,i.everyday?'Тийм':'Үгүй',i.text,w.name,ack?'Авсан':'Аваагүй',ack?(ack.datetime||ack.time):'—',ack&&ack.sig?'Байна':'Байхгүй'];}))];
+  const wsum=[['Ажилтан','Нэвтрэх нэр','Мэргэжил','Утасны дугаар','Нийт заавар','Авсан','Аваагүй','Хувь (%)','HABEA авсан','HABEA нийт','HABEA хувь (%)'],...ws_.map(w=>{const tk=all.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);const htk=hi.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);return[w.name,w.username,w.profession||'',w.phone||'',all.length,tk,all.length-tk,all.length?Math.round(tk/all.length*100):0,htk,hi.length,hi.length?Math.round(htk/hi.length*100):0];})];
+  const isum=[['Огноо','Төрөл','Өдөр бүр?','Агуулга','Авсан','Нийт','Хувь (%)','Аваагүй ажилтнууд'],...all.map(i=>{const cnt=ws_.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0);const ms=ws_.filter(w=>!getAck(i,w.id)).map(w=>w.name).join(', ');return[i.everyday?'Өдөр бүр':i.date,tLabel(i.type),i.everyday?'Тийм':'Үгүй',i.text,cnt,ws_.length,ws_.length?Math.round(cnt/ws_.length*100):0,ms||'—'];})];
+  const evsum=[['Агуулга','Төрөл','Өнөөдрийн авсан','Нийт ажилтан','Хувь (%)','Аваагүй ажилтнууд'],...ev.map(i=>{const cnt=ws_.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0);const ms=ws_.filter(w=>!getAck(i,w.id)).map(w=>w.name).join(', ');return[i.text,tLabel(i.type),cnt,ws_.length,ws_.length?Math.round(cnt/ws_.length*100):0,ms||'—'];})];
+
+  const wb=XLSX.utils.book_new();
+  [[det,'Дэлгэрэнгүй жагсаалт',8],[hdet,'HABEA тайлан',7],[wsum,'Ажилтан хураангуй',11],[isum,'Заавар хураангуй',8],[evsum,'Өдөр бүр давтагдах',6]].forEach(([data,name,cols])=>{
+    const sh=XLSX.utils.aoa_to_sheet(data);stX(sh,data.length,cols);
+    sh['!cols']=Array(cols).fill({wch:14});if(sh['!cols'][3])sh['!cols'][3]={wch:40};
+    XLSX.utils.book_append_sheet(wb,sh,name);
+  });
+  XLSX.writeFile(wb,`bsoft_workflow_${today()}.xlsx`);
+  showToast('Excel файл татагдлаа!','g');
+}
+function stX(ws,rows,cols){
+  const L='ABCDEFGHIJ'.split('');
+  for(let c=0;c<cols;c++){const a=L[c]+'1';if(!ws[a])continue;ws[a].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A8A'}},alignment:{horizontal:'center'}};}
+  for(let r=2;r<=rows;r++)for(let c=0;c<cols;c++){const a=L[c]+r;if(!ws[a])continue;ws[a].s={fill:{fgColor:{rgb:r%2===0?'EFF6FF':'FFFFFF'}},alignment:{wrapText:true}};}
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+let notifOn=false,hbTimer=null;
+const HBK='bsoft_hb_v2';
+async function toggleNotif(){
+  if(!('Notification'in window)){showToast('Browser notification дэмждэггүй!');return;}
+  if(notifOn){notifOn=false;stopHBT();updateNUI();showToast('Notification унтраагдлаа.');return;}
+  if(Notification.permission==='granted'){enableN();return;}
+  const p=await Notification.requestPermission();
+  if(p==='granted')enableN();else showToast('Notification зөвшөөрөл татгалзлаа.');
+}
+function enableN(){notifOn=true;updateNUI();startHBT();showToast('🔔 Notification идэвхжлээ!','g');setTimeout(()=>pN('✅ WorkFlow','Та цаашид шинэ зааварчилгааны мэдэгдэл хүлээн авна.','welcome'),600);}
+function updateNUI(){const d=document.getElementById('nDot'),l=document.getElementById('nLbl'),b=document.getElementById('nBtn');if(!d)return;if(notifOn){d.classList.add('on');l.textContent='Notification идэвхтэй';b.textContent='Унтраах';b.style.color='var(--red)';}else{d.classList.remove('on');l.textContent='Notification унтарсан';b.textContent='Асаах';b.style.color='';}}
+function pN(title,body,tag='wf'){if(!notifOn||Notification.permission!=='granted')return;const n=new Notification(title,{body,tag,requireInteraction:false});n.onclick=()=>{window.focus();n.close();if(CU)navigate(CU.role==='admin'?'dashboard':'today');};}
+function notifyNI(title,type){const tl={general:'Ерөнхий',habea:'🔷 HABEA',urgent:'🚨 Яаралтай'}[type]||'';pN(`📋 Шинэ заавар — ${tl}`,`"${title}" нийтлэгдлээ.`,'new-'+Date.now());}
+function startHBT(){stopHBT();hbTimer=setInterval(chkHB,30000);chkHB();}
+function stopHBT(){if(hbTimer){clearInterval(hbTimer);hbTimer=null;}}
+function chkHB(){if(!notifOn)return;const now=new Date(),h=now.getHours(),m=now.getMinutes(),dk=now.toISOString().slice(0,10);if(h===7&&m===30){const f=JSON.parse(localStorage.getItem(HBK)||'[]');if(!f.includes(dk)){f.push(dk);localStorage.setItem(HBK,JSON.stringify(f.slice(-60)));pN('🔔 HABEA — Өглөөний мэдэгдэл','Өнөөдрийн HABEA зааварчилгаа бэлэн байна. Нэвтэрч уншина уу.','habea-'+dk);showToast('🔔 HABEA автомат мэдэгдэл!','h');}}}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='g'?' tg':type==='h'?' th':'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
+
+// ============================================================
+// ICONS
+// ============================================================
+function iGrid(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`;}
+function iHb(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;}
+function iPlus(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;}
+function iChart(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;}
+function iUsers(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;}
+function iClock(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;}
+function iList(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`;}
+function iUP(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg>`;}
+function iRep(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;}
+</script>
+</body>
+</html>
