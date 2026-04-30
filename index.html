@@ -1222,19 +1222,8 @@ function stX(ws,rows,cols){
 // ============================================================
 async function sendPushToAll(title, message){
   try{
-    await fetch('https://api.onesignal.com/notifications',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':'Key '+OS_REST_KEY
-      },
-      body:JSON.stringify({
-        app_id: OS_APP_ID,
-        included_segments: ['All'],
-        headings: {mn: title, en: title},
-        contents: {mn: message, en: message},
-        url: window.location.href
-      })
+    await sb.functions.invoke('send-push', {
+      body: { title, message }
     });
   }catch(e){console.log('Push notification алдаа:',e);}
 }
