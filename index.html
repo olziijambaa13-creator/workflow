@@ -6,6 +6,20 @@
 <title>B SOFT — Workflow</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- OneSignal -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "e8ba56d2-ff80-4934-90c5-573edda10ab3",
+      notifyButton: { enable: false },
+      allowLocalhostAsSecureOrigin: true,
+    });
+  });
+</script>
 <style>
 :root{
   --bg:#0c0c0e;--bg2:#131316;--bg3:#1a1a1f;--bg4:#232329;--bg5:#2c2c34;
@@ -24,7 +38,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Pl
 input,textarea,select,button{font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--text)}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px}
 
-/* ── LOGIN ── */
 .lp{display:flex;align-items:center;justify-content:center;height:100vh}
 .lbox{width:350px}
 .lbrand{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
@@ -41,7 +54,6 @@ select.fi option{background:var(--bg3)}
 .lbtn{width:100%;padding:10px;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-weight:500;cursor:pointer;margin-top:4px;transition:background .15s}
 .lbtn:hover{background:var(--accent2)}
 
-/* ── LAYOUT ── */
 .layout{display:flex;height:100vh;overflow:hidden}
 .sidebar{width:212px;min-width:212px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
 .sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
@@ -76,11 +88,8 @@ select.fi option{background:var(--bg3)}
 .pgs{font-size:11px;color:var(--text3);margin-top:2px}
 .content{padding:20px 24px;flex:1}
 
-/* ── CARD ── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px}
 .ct{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
-
-/* ── STATS ── */
 .sg{display:grid;gap:10px;margin-bottom:14px}
 .sg4{grid-template-columns:repeat(4,1fr)}
 .sg3{grid-template-columns:repeat(3,1fr)}
@@ -88,12 +97,8 @@ select.fi option{background:var(--bg3)}
 .st{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
 .sv{font-size:24px;font-weight:600;font-family:'IBM Plex Mono',monospace;line-height:1}
 .sl{font-size:11px;color:var(--text3);margin-top:4px}
-
-/* ── PROGRESS ── */
 .prog{background:var(--bg5);height:4px;border-radius:2px;margin-top:4px;overflow:hidden}
 .pf{height:100%;border-radius:2px;transition:width .4s}
-
-/* ── BTN ── */
 .btn{padding:7px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;font-size:12px}
 .btn:hover{background:var(--bg3);color:var(--text)}
 .btnp{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -102,10 +107,6 @@ select.fi option{background:var(--bg3)}
 .btnd{color:var(--red);border-color:var(--rbd)}
 .btnd:hover{background:var(--rbg)}
 .btnh{color:var(--hb);border-color:var(--hbbd);background:var(--hbbg)}
-.btnh:hover{background:rgba(167,139,250,.18)}
-.btng{color:var(--green);border-color:var(--gbd);background:var(--gbg)}
-
-/* ── BADGE ── */
 .badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap;border:1px solid transparent}
 .bgg{background:var(--gbg);color:var(--green);border-color:var(--gbd)}
 .bgr{background:var(--rbg);color:var(--red);border-color:var(--rbd)}
@@ -113,8 +114,6 @@ select.fi option{background:var(--bg3)}
 .bga{background:var(--abg);color:var(--amber);border-color:var(--abd)}
 .bgh{background:var(--hbbg);color:var(--hb);border-color:var(--hbbd)}
 .bgev{background:var(--evbg);color:var(--ev);border-color:var(--evbd)}
-
-/* ── TABLE ── */
 .tw{overflow-x:auto;overflow-y:auto}
 .tw table{width:100%;border-collapse:collapse;table-layout:fixed}
 th{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;padding:8px 11px;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1}
@@ -122,15 +121,11 @@ td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text2);fon
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--bg3)}
 .tdm{color:var(--text);font-weight:500}
-
-/* ── FORM ── */
 .fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .lbl{display:block;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
 .fta{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;color:var(--text);outline:none;resize:vertical;min-height:80px;transition:border-color .15s;line-height:1.6}
 .fta:focus{border-color:var(--accent)}
 .fta::placeholder{color:var(--text3)}
-
-/* ── TOGGLE ── */
 .togwrap{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;margin-bottom:10px;transition:border-color .15s;user-select:none}
 .togwrap:hover{border-color:var(--border2)}
 .tog{width:36px;height:20px;border-radius:10px;background:var(--bg5);position:relative;transition:background .2s;flex-shrink:0}
@@ -140,60 +135,45 @@ tr:hover td{background:var(--bg3)}
 .tog.honn{background:var(--hb)}
 .toglbl{font-size:12px;color:var(--text);flex:1}
 .togsub{font-size:11px;color:var(--text3)}
-
-/* ── HABEA HEADER ── */
 .hbhdr{display:flex;align-items:center;gap:14px;padding:14px 18px;background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(167,139,250,.04));border:1px solid var(--hbbd);border-radius:var(--r);margin-bottom:14px}
 .hbico{font-size:26px;flex-shrink:0}
 .hbttl{font-size:14px;font-weight:600;color:var(--hb)}
 .hbsub{font-size:11px;color:var(--text3);margin-top:1px}
-
-/* ── INSTR CARD ── */
 .ic{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:10px;transition:border-color .2s}
 .ic:hover{border-color:var(--border2)}
 .ichb{border-color:var(--hbbd);background:linear-gradient(135deg,var(--bg2),rgba(167,139,250,.04))}
 .icmeta{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap}
 .icbody{font-size:13px;color:var(--text);line-height:1.7}
 .icfoot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-
-/* ── SEARCH ── */
 .srow{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .si{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:8px 12px;color:var(--text);outline:none;font-size:12px;transition:border-color .15s}
 .si:focus{border-color:var(--accent)}
 .si::placeholder{color:var(--text3)}
-
-/* ── PAGINATION ── */
 .pag{display:flex;align-items:center;gap:5px;margin-top:10px;flex-wrap:wrap}
 .pb{padding:4px 9px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:11px;transition:all .15s}
 .pb:hover{background:var(--bg3);color:var(--text)}
 .pb.cur{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
 .pinfo{font-size:10px;color:var(--text3);margin-left:auto;font-family:'IBM Plex Mono',monospace}
-
-/* ── SIG ── */
 .sigwrap{border:1.5px dashed var(--border2);border-radius:var(--rs);background:var(--bg3);position:relative;overflow:hidden;cursor:crosshair}
 .sigwrap canvas{display:block;width:100%;height:140px;touch-action:none}
 .sigph{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text3);pointer-events:none;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
 .sigacts{display:flex;gap:7px;margin-top:7px}
 .sth{width:68px;height:26px;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);object-fit:contain;cursor:pointer;vertical-align:middle}
-
-/* ── OVERLAY / MODAL ── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
 .overlay.open{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:490px;max-width:96vw;max-height:90vh;overflow-y:auto}
 .mttl{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
 .msub{font-size:11px;color:var(--text3);margin-bottom:16px}
-
-/* ── EXPORT ── */
 .expbtn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--rs);color:var(--green);cursor:pointer;font-size:12px;transition:all .15s;font-family:'IBM Plex Sans',sans-serif}
 .expbtn:hover{background:rgba(45,212,160,.18)}
-
-/* ── TOAST ── */
 .toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 16px;font-size:12px;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .25s;z-index:999;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 .tg{border-color:var(--gbd);color:var(--green)}
 .th{border-color:var(--hbbd);color:var(--hb)}
-
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--text3);font-size:13px;gap:10px}
+.spin{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:900px){.sg4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.sidebar{width:100%;min-width:unset}.layout{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -204,8 +184,8 @@ tr:hover td{background:var(--bg3)}
   <div class="lbrand">B SOFT LLC</div>
   <div class="ltitle">Нэвтрэх<br><span>системд</span></div>
   <div class="lcard">
-    <div class="fl"><label>Нэвтрэх нэр</label><input class="fi" id="lu" type="text" placeholder="username" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="fl"><label>Нууц үг</label><input class="fi" id="lp2" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="fl"><label>Нэвтрэх нэр</label><input class="fi" id="lu" type="text" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="fl"><label>Нууц үг</label><input class="fi" id="lp2" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <div class="ferr" id="lerr"></div>
     <button class="lbtn" onclick="doLogin()">Нэвтрэх →</button>
   </div>
@@ -222,7 +202,7 @@ tr:hover td{background:var(--bg3)}
         <div class="av" id="uAv">--</div>
         <div><div class="unm" id="uNm">--</div><div class="url" id="uRl">--</div></div>
       </div>
-      <div class="nb" onclick="toggleNotif()">
+      <div class="nb" id="notifBar" onclick="toggleNotif()">
         <div class="nd" id="nDot"></div>
         <span class="nbl" id="nLbl">Notification унтарсан</span>
         <button class="nbb" id="nBtn">Асаах</button>
@@ -231,9 +211,7 @@ tr:hover td{background:var(--bg3)}
     </div>
   </div>
   <div class="main">
-    <div class="topbar">
-      <div><div class="pgt" id="pgT">—</div><div class="pgs" id="pgS">—</div></div>
-    </div>
+    <div class="topbar"><div><div class="pgt" id="pgT">—</div><div class="pgs" id="pgS">—</div></div></div>
     <div class="content" id="CA"></div>
   </div>
 </div>
@@ -277,8 +255,8 @@ tr:hover td{background:var(--bg3)}
         </select></div>
       <div><label class="lbl">Давтамж</label>
         <select class="fi" id="eiMode" onchange="eiModeChg()">
-          <option value="once">Нэг удаа (огноо сонгох)</option>
-          <option value="every">Өдөр бүр (байнга)</option>
+          <option value="once">Нэг удаа</option>
+          <option value="every">Өдөр бүр</option>
         </select></div>
     </div>
     <div id="eiDW" style="margin-bottom:10px"><label class="lbl">Огноо</label><input class="fi" id="eiDate" type="date" style="width:100%"></div>
@@ -320,84 +298,106 @@ tr:hover td{background:var(--bg3)}
 
 <script>
 // ============================================================
-// DATA
+// SUPABASE CONFIG
 // ============================================================
-const SK='bsoft_wf_v6';
-const DEF={
-  users:[
-    {id:5,name:'Админ',username:'admin',password:'admin123',role:'admin',profession:'Системийн администратор',phone:''},
-  ],
-  // everyday:true → date is null, acks keyed as "YYYY-MM-DD_uid"
-  // everyday:false → date set, acks keyed as String(uid)
-  instructions:[]
-};
+const SB_URL = 'https://koncffbcpvxuukhwkuvl.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbmNmZmJjcHZ4dXVraHdrdXZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NTg5NjUsImV4cCI6MjA5MzEzNDk2NX0.W7sOxw502ql9vsC0aoNZZkWke2EPqkdVUIQoK-n4ezw';
+const OS_APP_ID = 'e8ba56d2-ff80-4934-90c5-573edda10ab3';
+const OS_REST_KEY = 'os_v2_app_5c5fnux7qbetjegfk47n3iikwods4qv2cqdetbm3qazowhvuaxuc7esay36i67cu7fndn2mylaxxridjoemykuzoozrre6nsh6ynwaq';
 
-function loadDB(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):JSON.parse(JSON.stringify(DEF));}catch{return JSON.parse(JSON.stringify(DEF));}}
-function saveDB(d){localStorage.setItem(SK,JSON.stringify(d));}
+const { createClient } = supabase;
+const sb = createClient(SB_URL, SB_KEY);
 
-let DB=loadDB(),CU=null,pendingSigId=null;
-let wPage=1,iPage=1; const WPP=20,IPP=15;
-let wSrch='',iSrch='';
+// ============================================================
+// STATE
+// ============================================================
+let CU = null, pendingSigId = null;
+let wPage=1, iPage=1;
+const WPP=20, IPP=15;
+let wSrch='', iSrch='';
 let everyOn=false;
+let notifOn=false;
+
+// Cache
+let USERS=[], INSTRS=[], ACKS=[];
 
 function today(){return new Date().toISOString().slice(0,10);}
 function nowTime(){return new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'});}
 function nowDT(){return new Date().toLocaleString('mn-MN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
-function workers(){return DB.users.filter(u=>u.role==='worker');}
+function workers(){return USERS.filter(u=>u.role==='worker');}
 function tLabel(t){return{general:'Ерөнхий',habea:'HABEA',urgent:'Яаралтай'}[t]||'Ерөнхий';}
 function tBadge(t,ev){
   let b=t==='habea'?'<span class="badge bgh">🔷 HABEA</span>':t==='urgent'?'<span class="badge bgr">🚨 Яаралтай</span>':'<span class="badge bgb">Ерөнхий</span>';
   if(ev) b+=' <span class="badge bgev">🔄 Өдөр бүр</span>';
   return b;
 }
-
+function activeToday(i){return i.everyday||(i.date===today());}
+function targMatch(i,uid){
+  const t=i.targets;
+  if(t==='all'||t===null||t===undefined) return true;
+  const arr=Array.isArray(t)?t:(typeof t==='string'?JSON.parse(t):t);
+  if(arr==='all') return true;
+  return Array.isArray(arr)&&arr.includes(Number(uid));
+}
 function targLabel(i){
-  if(i.targets==='all') return '<span class="badge bgb" style="font-size:9px">Бүх ажилтан</span>';
+  const t=i.targets;
+  if(!t||t==='all') return '<span class="badge bgb" style="font-size:9px">Бүх ажилтан</span>';
+  const arr=Array.isArray(t)?t:(typeof t==='string'?JSON.parse(t):t);
+  if(arr==='all'||!Array.isArray(arr)) return '<span class="badge bgb" style="font-size:9px">Бүх ажилтан</span>';
   const ws=workers();
-  const ids=Array.isArray(i.targets)?i.targets:[Number(i.targets)];
-  const names=ids.map(id=>ws.find(w=>w.id===id)?.name||'').filter(Boolean);
+  const names=arr.map(id=>ws.find(w=>w.id===id)?.name||'').filter(Boolean);
   if(names.length===0) return '<span class="badge bgb" style="font-size:9px">Бүх ажилтан</span>';
   if(names.length<=3) return names.map(n=>`<span class="badge bga" style="font-size:9px">${n}</span>`).join(' ');
   return `<span class="badge bga" style="font-size:9px">${names.slice(0,2).join(', ')} +${names.length-2}</span>`;
 }
 
-
-function targMatch(i, uid){
-  if(i.targets==='all') return true;
-  if(Array.isArray(i.targets)) return i.targets.includes(Number(uid));
-  return Number(i.targets)===Number(uid);
+// Get ack for instruction+user (handles everyday date keying)
+function getAck(instr, uid){
+  return ACKS.find(a=>a.instruction_id===instr.id&&a.user_id===Number(uid)&&(instr.everyday?a.ack_date===today():true))||null;
 }
 
-
-function ackKey(i,uid){return i.everyday?today()+'_'+uid:String(uid);}
-function getAck(i,uid){return i.acks[ackKey(i,uid)]||null;}
-function setAck(i,uid,val){i.acks[ackKey(i,uid)]=val;}
-
-// Is this instruction visible today?
-function activeToday(i){return i.everyday||(i.date===today());}
+// ============================================================
+// DATA LOADING
+// ============================================================
+async function loadAll(){
+  const [ur, ir, ar] = await Promise.all([
+    sb.from('users').select('*').order('id'),
+    sb.from('instructions').select('*').order('id', {ascending:false}),
+    sb.from('acknowledgements').select('*')
+  ]);
+  USERS = ur.data||[];
+  INSTRS = ir.data||[];
+  ACKS = ar.data||[];
+}
 
 // ============================================================
 // AUTH
 // ============================================================
-function doLogin(){
+async function doLogin(){
   const u=document.getElementById('lu').value.trim();
   const p=document.getElementById('lp2').value;
-  const f=DB.users.find(x=>x.username===u&&x.password===p);
-  if(!f){document.getElementById('lerr').textContent='Нэвтрэх нэр эсвэл нууц үг буруу.';return;}
-  CU=f;
+  const err=document.getElementById('lerr');
+  err.textContent='Нэвтэрч байна...';
+  const {data,error}=await sb.from('users').select('*').eq('username',u).eq('password',p).single();
+  if(error||!data){err.textContent='Нэвтрэх нэр эсвэл нууц үг буруу.';return;}
+  CU=data;
+  err.textContent='';
   document.getElementById('loginPage').style.display='none';
   document.getElementById('appLayout').style.display='flex';
+  await loadAll();
   initApp();
 }
 function doLogout(){
   CU=null;
   document.getElementById('loginPage').style.display='flex';
   document.getElementById('appLayout').style.display='none';
-  document.getElementById('lu').value='';document.getElementById('lp2').value='';document.getElementById('lerr').textContent='';
+  document.getElementById('lu').value='';
+  document.getElementById('lp2').value='';
+  document.getElementById('lerr').textContent='';
 }
 
 // ============================================================
-// APP
+// APP INIT
 // ============================================================
 function initApp(){
   document.getElementById('uAv').textContent=(CU.name[0]||'?').toUpperCase();
@@ -412,20 +412,20 @@ function buildNav(){
   const nav=document.getElementById('sideNav');
   const ai=[
     {g:'Хяналт'},
-    {id:'dashboard', ic:iGrid,  lb:'Хяналтын самбар'},
-    {id:'habea-db',  ic:iHb,    lb:'HABEA самбар', cl:'hni'},
+    {id:'dashboard',ic:iGrid,lb:'Хяналтын самбар'},
+    {id:'habea-db',ic:iHb,lb:'HABEA самбар',cl:'hni'},
     {g:'Заавар'},
-    {id:'add-instr', ic:iPlus,  lb:'Заавар нэмэх'},
-    {id:'tracking',  ic:iChart, lb:'Хяналт'},
-    {id:'report',    ic:iRep,   lb:'Тайлан / Export'},
+    {id:'add-instr',ic:iPlus,lb:'Заавар нэмэх'},
+    {id:'tracking',ic:iChart,lb:'Хяналт'},
+    {id:'report',ic:iRep,lb:'Тайлан / Export'},
     {g:'Хэрэглэгч'},
-    {id:'workers',   ic:iUsers, lb:'Ажилтнууд'},
-    {id:'mu',        ic:iUP,    lb:'Хэрэглэгч удирдах'},
+    {id:'workers',ic:iUsers,lb:'Ажилтнууд'},
+    {id:'mu',ic:iUP,lb:'Хэрэглэгч удирдах'},
   ];
   const wi=[
-    {id:'today',   ic:iClock, lb:'Өнөөдрийн заавар'},
-    {id:'habea-w', ic:iHb,    lb:'HABEA заавар', cl:'hni'},
-    {id:'history', ic:iList,  lb:'Зааврын түүх'},
+    {id:'today',ic:iClock,lb:'Өнөөдрийн заавар'},
+    {id:'habea-w',ic:iHb,lb:'HABEA заавар',cl:'hni'},
+    {id:'history',ic:iList,lb:'Зааврын түүх'},
   ];
   const items=CU.role==='admin'?ai:wi;
   nav.innerHTML=items.map(it=>{
@@ -434,49 +434,48 @@ function buildNav(){
   }).join('');
 }
 
-function navigate(page){
-  DB=loadDB();
+async function navigate(page){
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
   const btn=document.getElementById('nav-'+page);if(btn)btn.classList.add('active');
   const T={
-    'dashboard':  ['Хяналтын самбар','Ерөнхий тойм'],
-    'habea-db':   ['HABEA самбар','HABEA зааварчилгааны хяналт'],
-    'add-instr':  ['Заавар нэмэх','Шинэ ажлын заавар үүсгэх'],
-    'tracking':   ['Хяналт','Хэн авсан, хэн аваагүй'],
-    'report':     ['Тайлан / Export','Excel файл татаж авах'],
-    'workers':    ['Ажилтнууд','Бүртгэлтэй ажилтнуудын жагсаалт'],
-    'mu':         ['Хэрэглэгч удирдах','Нэмэх · засах · устгах'],
-    'today':      ['Өнөөдрийн заавар',today()],
-    'habea-w':    ['HABEA заавар','Миний HABEA зааварчилгаа'],
-    'history':    ['Зааврын түүх','Бүх заавруудын жагсаалт'],
+    'dashboard':['Хяналтын самбар','Ерөнхий тойм'],
+    'habea-db':['HABEA самбар','HABEA зааварчилгааны хяналт'],
+    'add-instr':['Заавар нэмэх','Шинэ ажлын заавар үүсгэх'],
+    'tracking':['Хяналт','Хэн авсан, хэн аваагүй'],
+    'report':['Тайлан / Export','Excel файл татаж авах'],
+    'workers':['Ажилтнууд','Бүртгэлтэй ажилтнуудын жагсаалт'],
+    'mu':['Хэрэглэгч удирдах','Нэмэх · засах · устгах'],
+    'today':['Өнөөдрийн заавар',today()],
+    'habea-w':['HABEA заавар','Миний HABEA зааварчилгаа'],
+    'history':['Зааврын түүх','Бүх заавруудын жагсаалт'],
   };
   const [t,s]=T[page]||['',''];
   document.getElementById('pgT').textContent=t;
   document.getElementById('pgS').textContent=s;
+  document.getElementById('CA').innerHTML=`<div class="loading"><div class="spin"></div>Уншиж байна...</div>`;
+  await loadAll();
   const M={
-    'dashboard': rDash,'habea-db': rHabeaDB,'add-instr': rAddInstr,
-    'tracking':  rTracking,'report': rReport,'workers': rWorkers,
-    'mu':        rMU,'today': rToday,'habea-w': rHabeaW,'history': rHistory,
+    'dashboard':rDash,'habea-db':rHabeaDB,'add-instr':rAddInstr,
+    'tracking':rTracking,'report':rReport,'workers':rWorkers,
+    'mu':rMU,'today':rToday,'habea-w':rHabeaW,'history':rHistory,
   };
   document.getElementById('CA').innerHTML=(M[page]||(() =>''))();
 }
 
 // ============================================================
-// ADMIN — DASHBOARD
+// DASHBOARD
 // ============================================================
 function rDash(){
-  const ws=workers(),all=DB.instructions;
-  const todayAll=all.filter(i=>activeToday(i));
-  let totalAcks=0;
-  all.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))totalAcks++;}));
-  const poss=all.length*ws.length;
+  const ws=workers();
+  const todayAll=INSTRS.filter(i=>activeToday(i));
+  const totalAcks=ACKS.length;
+  const poss=INSTRS.length*ws.length;
   const pct=poss?Math.round(totalAcks/poss*100):0;
-  const sorted=[...all].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999')).slice(0,8);
-
+  const sorted=INSTRS.slice(0,8);
   return `
 <div class="sg sg4">
-  <div class="st"><div class="sv" style="color:var(--accent)">${all.length}</div><div class="sl">Нийт заавар</div></div>
-  <div class="st"><div class="sv" style="color:var(--hb)">${all.filter(i=>i.type==='habea').length}</div><div class="sl">HABEA заавар</div></div>
+  <div class="st"><div class="sv" style="color:var(--accent)">${INSTRS.length}</div><div class="sl">Нийт заавар</div></div>
+  <div class="st"><div class="sv" style="color:var(--hb)">${INSTRS.filter(i=>i.type==='habea').length}</div><div class="sl">HABEA заавар</div></div>
   <div class="st"><div class="sv" style="color:var(--green)">${totalAcks}</div><div class="sl">Нийт хүлээн авалт</div></div>
   <div class="st"><div class="sv" style="color:var(--amber)">${pct}%</div><div class="sl">Нийт хамрагдалт</div></div>
 </div>
@@ -484,15 +483,16 @@ function rDash(){
   <div class="card">
     <div class="ct">Өнөөдрийн байдал — ${today()}</div>
     ${todayAll.length===0?'<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Өнөөдрийн заавар байхгүй</div>':
-    todayAll.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;return `
-      <div style="margin-bottom:10px">${tBadge(i.type,i.everyday)}
+    todayAll.map(i=>{
+      const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
+      return `<div style="margin-bottom:10px">${tBadge(i.type,i.everyday)}
         <div style="font-size:12px;color:var(--text);margin:4px 0 2px;line-height:1.5">${i.text.length>60?i.text.slice(0,60)+'…':i.text}</div>
         <div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${cnt}/${tot}</div>
         <div class="prog"><div class="pf" style="width:${tot?Math.round(cnt/tot*100):0}%;background:${cnt===tot?'var(--green)':'var(--accent)'}"></div></div>
       </div>`;}).join('')}
   </div>
   <div class="card">
-    <div class="ct">Ажилтнуудын хамрагдалт (өнөөдөр)</div>
+    <div class="ct">Ажилтнуудын хамрагдалт</div>
     <div style="max-height:280px;overflow-y:auto">
     ${ws.slice(0,15).map(w=>{
       const tk=todayAll.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
@@ -504,7 +504,6 @@ function rDash(){
           <div class="prog"><div class="pf" style="width:${p2}%;background:${p2===100?'var(--green)':'var(--accent)'}"></div></div>
         </div>
       </div>`;}).join('')}
-    ${ws.length>15?`<div style="font-size:10px;color:var(--text3);text-align:center;padding:6px">+${ws.length-15} ажилтан...</div>`:''}
     </div>
   </div>
 </div>
@@ -515,7 +514,8 @@ function rDash(){
   </div>
   <div class="tw" style="max-height:300px"><table>
     <thead><tr><th style="width:110px">Огноо/Горим</th><th style="width:90px">Төрөл</th><th>Агуулга</th><th style="width:65px">Авсан</th><th style="width:110px">Байдал</th></tr></thead>
-    <tbody>${sorted.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
+    <tbody>${sorted.map(i=>{
+      const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
       return `<tr>
         <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Байнга':i.date}</td>
         <td>${tBadge(i.type,false)}</td>
@@ -528,15 +528,14 @@ function rDash(){
 }
 
 // ============================================================
-// ADMIN — HABEA DASHBOARD
+// HABEA DASHBOARD (ADMIN)
 // ============================================================
 function rHabeaDB(){
   const ws=workers();
-  const hi=[...DB.instructions].filter(i=>i.type==='habea').sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const hi=INSTRS.filter(i=>i.type==='habea');
   const todH=hi.filter(i=>activeToday(i));
-  let totalAcks=0;hi.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))totalAcks++;}));
-  const poss=hi.length*ws.length,pct=poss?Math.round(totalAcks/poss*100):0;
-
+  const haAcks=ACKS.filter(a=>hi.find(i=>i.id===a.instruction_id)).length;
+  const poss=hi.length*ws.length, pct=poss?Math.round(haAcks/poss*100):0;
   return `
 <div class="hbhdr">
   <div class="hbico">🔷</div>
@@ -552,7 +551,7 @@ function rHabeaDB(){
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
   <div class="card" style="border-color:var(--hbbd)">
     <div class="ct" style="color:var(--hb)">Ажилтан тус бүрийн HABEA хамрагдалт</div>
-    <div style="max-height:340px;overflow-y:auto">
+    <div style="max-height:320px;overflow-y:auto">
     ${ws.map(w=>{
       const tk=hi.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0),tot=hi.length,p2=tot?Math.round(tk/tot*100):0;
       return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
@@ -581,11 +580,10 @@ function rHabeaDB(){
 </div>
 <div class="card" style="border-color:var(--hbbd)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-    <div class="ct" style="margin-bottom:0;color:var(--hb)">Бүх HABEA зааврын дэлгэрэнгүй — гарын үсэг харах</div>
+    <div class="ct" style="margin-bottom:0;color:var(--hb)">Бүх HABEA зааврын дэлгэрэнгүй</div>
     <button class="expbtn" onclick="exportExcel()">📊 Excel</button>
   </div>
-  ${hi.length===0?'<div style="text-align:center;padding:24px;color:var(--text3);font-size:12px">HABEA заавар байхгүй</div>':
-  hi.map(i=>detailRow(i,ws)).join('')}
+  ${hi.length===0?'<div style="text-align:center;padding:24px;color:var(--text3);font-size:12px">HABEA заавар байхгүй</div>':hi.map(i=>detailRow(i,ws)).join('')}
 </div>`;
 }
 
@@ -610,17 +608,16 @@ function detailRow(i,ws){
       ${ws.map(w=>{const ack=getAck(i,w.id);
         if(ack) return `<div style="background:var(--gbg);border:1px solid var(--gbd);border-radius:5px;padding:4px 9px;display:flex;align-items:center;gap:6px">
           <span style="font-size:11px;color:var(--green);font-weight:500">${w.name} ✔</span>
-          <span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${ack.datetime||ack.time}</span>
+          <span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${ack.signed_at?new Date(ack.signed_at).toLocaleString('mn-MN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):''}</span>
           ${ack.sig?`<img class="sth" src="${ack.sig}" onclick="viewSig('${ack.sig}','${w.name}')">`:'<span style="font-size:9px;color:var(--text3);font-style:italic">гарын үсэггүй</span>'}
         </div>`;
-        return `<span class="badge bgr">${w.name} ✘</span>`;
-      }).join('')}
+        return `<span class="badge bgr">${w.name} ✘</span>`;}).join('')}
     </div>
   </div>`;
 }
 
 // ============================================================
-// ADMIN — ADD INSTRUCTION
+// ADD INSTRUCTION
 // ============================================================
 function rAddInstr(){
   const ws=workers();
@@ -628,8 +625,6 @@ function rAddInstr(){
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
   <div class="card">
     <div class="ct">Шинэ заавар нэмэх</div>
-
-    <!-- EVERYDAY TOGGLE -->
     <div class="togwrap" id="evTog" onclick="toggleEv()">
       <div class="tog" id="evSw"></div>
       <div><div class="toglbl">Өдөр бүр байнга давтагдах</div><div class="togsub" id="evSub">Унтарсан — нэг удааны огноо сонгоно</div></div>
@@ -642,7 +637,6 @@ function rAddInstr(){
           <option value="habea">🔷 HABEA заавар</option>
           <option value="urgent">🚨 Яаралтай</option>
         </select></div>
-      <div><!-- spacer --></div>
     </div>
     <div style="margin-bottom:14px">
       <label class="lbl">Хэнд илгээх</label>
@@ -669,7 +663,7 @@ function rAddInstr(){
     </div>
   </div>
   <div class="card">
-    <div class="ct">Байнга давтагдах заавруудыг засах <span class="badge bgev" style="font-size:9px">🔄 EVERYDAY</span></div>
+    <div class="ct">Байнга давтагдах заавруудыг харах <span class="badge bgev" style="font-size:9px">🔄</span></div>
     ${evList()}
   </div>
 </div>
@@ -680,7 +674,7 @@ function rAddInstr(){
 }
 
 function evList(){
-  const ev=DB.instructions.filter(i=>i.everyday).sort((a,b)=>a.type.localeCompare(b.type));
+  const ev=INSTRS.filter(i=>i.everyday);
   if(!ev.length) return '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">Байнга давтагдах заавар байхгүй</div>';
   return ev.map(i=>`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
     <div style="display:flex;align-items:flex-start;gap:8px">
@@ -695,8 +689,7 @@ function evList(){
 
 function instrTbl(){
   const ws=workers();
-  const all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
-  const fil=iSrch?all.filter(i=>i.text.toLowerCase().includes(iSrch)||tLabel(i.type).toLowerCase().includes(iSrch)):all;
+  const fil=iSrch?INSTRS.filter(i=>i.text.toLowerCase().includes(iSrch)):INSTRS;
   const tp=Math.ceil(fil.length/IPP),pg=Math.min(iPage,tp||1);
   const sl=fil.slice((pg-1)*IPP,pg*IPP);
   return `<div class="srow"><input class="si" placeholder="Заавар хайх..." value="${iSrch}" oninput="iSrch=this.value.toLowerCase();iPage=1;navigate('add-instr')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length} заавар</span></div>
@@ -715,34 +708,23 @@ function instrTbl(){
 ${pagCtrl(pg,tp,'iPage','add-instr',fil.length)}`;
 }
 
-function toggleEv(){
-  everyOn=!everyOn;
-  const sw=document.getElementById('evSw'),sub=document.getElementById('evSub'),dw=document.getElementById('nDateW');
-  if(everyOn){sw.classList.add('on','honn');sub.textContent='Идэвхтэй — өдөр бүр бүх ажилтанд харагдана';dw.style.display='none';}
-  else{sw.classList.remove('on','honn');sub.textContent='Унтарсан — нэг удааны огноо сонгоно';dw.style.display='block';}
-}
-
 function targAllChg(){
   const allCb=document.getElementById('targAll');
   const list=document.getElementById('targList');
   const sum=document.getElementById('targSummary');
   list.style.display=allCb.checked?'none':'block';
   sum.style.display=allCb.checked?'none':'block';
-  if(allCb.checked){
-    document.querySelectorAll('.targCb').forEach(c=>c.checked=false);
-    sum.textContent='';
-  }
+  if(allCb.checked){document.querySelectorAll('.targCb').forEach(c=>c.checked=false);sum.textContent='';}
 }
 function targCbChg(){
   const checked=[...document.querySelectorAll('.targCb:checked')];
   const allCb=document.getElementById('targAll');
-  const ws=workers();
   if(checked.length===0){allCb.checked=true;targAllChg();return;}
   allCb.checked=false;
+  const ws=workers();
   const names=checked.map(c=>ws.find(w=>w.id===Number(c.value))?.name||'').filter(Boolean);
   const sum=document.getElementById('targSummary');
-  sum.style.display='block';
-  sum.textContent='Сонгогдсон: '+names.join(', ');
+  sum.style.display='block';sum.textContent='Сонгогдсон: '+names.join(', ');
 }
 function getTargets(){
   const allCb=document.getElementById('targAll');
@@ -750,35 +732,48 @@ function getTargets(){
   const checked=[...document.querySelectorAll('.targCb:checked')].map(c=>Number(c.value));
   return checked.length===0?'all':checked;
 }
+function toggleEv(){
+  everyOn=!everyOn;
+  const sw=document.getElementById('evSw'),sub=document.getElementById('evSub'),dw=document.getElementById('nDateW');
+  if(everyOn){sw.classList.add('on','honn');sub.textContent='Идэвхтэй — өдөр бүр бүх ажилтанд харагдана';dw.style.display='none';}
+  else{sw.classList.remove('on','honn');sub.textContent='Унтарсан — нэг удааны огноо сонгоно';dw.style.display='block';}
+}
 
-function addInstr(){
+async function addInstr(){
   const txt=document.getElementById('nText').value.trim();
   const dt=everyOn?null:document.getElementById('nDate').value;
   const type=document.getElementById('nType').value;
   const targets=getTargets();
   if(!txt){showToast('Зааврын агуулга хоосон байна!');return;}
   if(!everyOn&&!dt){showToast('Огноо сонгоно уу!');return;}
-  DB=loadDB();
-  DB.instructions.push({id:Date.now(),date:dt,everyday:everyOn,type,text:txt,createdBy:CU.id,targets,acks:{}});
-  saveDB(DB);everyOn=false;
-  notifyNI(txt.slice(0,50),type);
-  showToast('Заавар нийтлэгдлээ!',type==='habea'?'h':'g');
+  const {data,error}=await sb.from('instructions').insert({
+    date:dt, everyday:everyOn, type, text:txt,
+    targets:targets==='all'?'all':JSON.stringify(targets),
+    created_by:CU.id
+  }).select().single();
+  if(error){showToast('Алдаа гарлаа: '+error.message);return;}
+  everyOn=false;
+  // OneSignal push notification
+  await sendPushToAll(`📋 Шинэ ${tLabel(type)} заавар`, txt.slice(0,80));
+  showToast('Заавар нийтлэгдлээ! Мэдэгдэл илгээгдлээ.',type==='habea'?'h':'g');
   navigate('add-instr');
 }
 
-function delInstr(id){
+async function delInstr(id){
   if(!confirm('Энэ зааврыг устгах уу?'))return;
-  DB=loadDB();DB.instructions=DB.instructions.filter(i=>i.id!==id);saveDB(DB);
+  await sb.from('acknowledgements').delete().eq('instruction_id',id);
+  await sb.from('instructions').delete().eq('id',id);
   showToast('Устгагдлаа');
   navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'add-instr');
 }
 
-// ── Edit Instr Modal ──
+// EDIT INSTR
 function eiTargAllChg(){
   const allCb=document.getElementById('eiTargAll');
-  document.querySelectorAll('.eiTargCb').forEach(c=>c.checked=false);
-  document.getElementById('eiTargList').style.opacity=allCb.checked?'.4':'1';
-  document.getElementById('eiTargList').style.pointerEvents=allCb.checked?'none':'auto';
+  const list=document.getElementById('eiTargList');
+  list.style.opacity=allCb.checked?'.4':'1';
+  list.style.pointerEvents=allCb.checked?'none':'auto';
+  if(allCb.checked) document.querySelectorAll('.eiTargCb').forEach(c=>c.checked=false);
 }
 function getEiTargets(){
   const allCb=document.getElementById('eiTargAll');
@@ -786,36 +781,34 @@ function getEiTargets(){
   const checked=[...document.querySelectorAll('.eiTargCb:checked')].map(c=>Number(c.value));
   return checked.length===0?'all':checked;
 }
+function eiModeChg(){document.getElementById('eiDW').style.display=document.getElementById('eiMode').value==='every'?'none':'block';}
 function openEI(id){
-  DB=loadDB();const i=DB.instructions.find(x=>x.id===id);if(!i)return;
+  const i=INSTRS.find(x=>x.id===id);if(!i)return;
   const ws=workers();
   document.getElementById('eiId').value=id;
   document.getElementById('eiType').value=i.type||'general';
   document.getElementById('eiMode').value=i.everyday?'every':'once';
   document.getElementById('eiDate').value=i.date||today();
   document.getElementById('eiText').value=i.text;
-  // Build checkboxes
   const list=document.getElementById('eiTargList');
   list.innerHTML=ws.map(w=>`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
     <input type="checkbox" class="eiTargCb" value="${w.id}" style="accent-color:var(--accent);width:13px;height:13px;cursor:pointer">
     <span style="font-size:12px;color:var(--text)">${w.name}</span>
     ${w.profession?`<span style="font-size:10px;color:var(--text3)">· ${w.profession}</span>`:''}
   </label>`).join('');
-  // Set checked state
   const allCb=document.getElementById('eiTargAll');
-  if(i.targets==='all'){
-    allCb.checked=true;list.style.opacity='.4';list.style.pointerEvents='none';
-  } else {
+  const t=i.targets;
+  if(!t||t==='all'){allCb.checked=true;list.style.opacity='.4';list.style.pointerEvents='none';}
+  else{
     allCb.checked=false;list.style.opacity='1';list.style.pointerEvents='auto';
-    const ids=Array.isArray(i.targets)?i.targets:[Number(i.targets)];
-    document.querySelectorAll('.eiTargCb').forEach(c=>{c.checked=ids.includes(Number(c.value));});
+    const arr=Array.isArray(t)?t:(typeof t==='string'?JSON.parse(t):[]);
+    document.querySelectorAll('.eiTargCb').forEach(c=>{c.checked=arr.includes(Number(c.value));});
   }
   eiModeChg();
   document.getElementById('eiModal').classList.add('open');
 }
-function eiModeChg(){document.getElementById('eiDW').style.display=document.getElementById('eiMode').value==='every'?'none':'block';}
 function closeEI(){document.getElementById('eiModal').classList.remove('open');}
-function saveEI(){
+async function saveEI(){
   const id=Number(document.getElementById('eiId').value);
   const type=document.getElementById('eiType').value;
   const every=document.getElementById('eiMode').value==='every';
@@ -823,24 +816,23 @@ function saveEI(){
   const txt=document.getElementById('eiText').value.trim();
   const targets=getEiTargets();
   if(!txt){showToast('Агуулга хоосон байна!');return;}
-  if(!every&&!dt){showToast('Огноо сонгоно уу!');return;}
-  DB=loadDB();const i=DB.instructions.find(x=>x.id===id);if(!i)return;
-  i.type=type;i.everyday=every;i.date=dt;i.text=txt;i.targets=targets;
-  saveDB(DB);closeEI();
-  showToast('Хадгалагдлаа!',type==='habea'?'h':'g');
+  const {error}=await sb.from('instructions').update({
+    type, everyday:every, date:dt, text:txt,
+    targets:targets==='all'?'all':JSON.stringify(targets)
+  }).eq('id',id);
+  if(error){showToast('Алдаа: '+error.message);return;}
+  closeEI();showToast('Хадгалагдлаа!',type==='habea'?'h':'g');
   navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'add-instr');
 }
 
 // ============================================================
-// ADMIN — TRACKING
+// TRACKING
 // ============================================================
 function rTracking(){
   const ws=workers();
-  const all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
-  const fil=iSrch?all.filter(i=>i.text.toLowerCase().includes(iSrch)):all;
+  const fil=iSrch?INSTRS.filter(i=>i.text.toLowerCase().includes(iSrch)):INSTRS;
   const tp=Math.ceil(fil.length/IPP),pg=Math.min(iPage,tp||1);
   const sl=fil.slice((pg-1)*IPP,pg*IPP);
-
   return `
 <div class="card" style="margin-bottom:12px">
   <div class="ct">Ажилтан тус бүрийн нийт дүн</div>
@@ -848,9 +840,9 @@ function rTracking(){
   <div class="tw" style="max-height:320px"><table>
     <thead><tr><th>Ажилтан</th><th style="width:60px">Авсан</th><th style="width:60px">Аваагүй</th><th style="width:130px">Хувь</th><th style="width:80px">HABEA</th><th style="width:100px">Байдал</th></tr></thead>
     <tbody>${ws.filter(w=>!wSrch||w.name.toLowerCase().includes(wSrch)).map(w=>{
-      const tk=all.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0),tot=all.length,ms=tot-tk,p2=tot?Math.round(tk/tot*100):0;
-      const hbtk=all.filter(i=>i.type==='habea').reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
-      const hbtot=all.filter(i=>i.type==='habea').length;
+      const tk=INSTRS.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0),tot=INSTRS.length,ms=tot-tk,p2=tot?Math.round(tk/tot*100):0;
+      const hbtk=INSTRS.filter(i=>i.type==='habea').reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
+      const hbtot=INSTRS.filter(i=>i.type==='habea').length;
       return `<tr>
         <td class="tdm">${w.name}</td>
         <td style="color:var(--green);font-family:'IBM Plex Mono',monospace">${tk}</td>
@@ -873,58 +865,37 @@ function rTracking(){
 }
 
 // ============================================================
-// ADMIN — REPORT
+// REPORT
 // ============================================================
 function rReport(){
-  const ws=workers(),all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
-  const hi=all.filter(i=>i.type==='habea');
-  let totalAcks=0;all.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))totalAcks++;}));
-  let haAcks=0;hi.forEach(i=>ws.forEach(w=>{if(getAck(i,w.id))haAcks++;}));
-  const poss=all.length*ws.length,hposs=hi.length*ws.length;
+  const ws=workers();
+  const hi=INSTRS.filter(i=>i.type==='habea');
+  const haAcks=ACKS.filter(a=>hi.find(i=>i.id===a.instruction_id)).length;
+  const poss=INSTRS.length*ws.length,hposs=hi.length*ws.length;
   return `
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
   <div class="card">
     <div class="ct">Тайлангийн мэдээлэл</div>
     <div style="font-size:12px;color:var(--text2);line-height:2">
-      Нийт заавар: <strong style="color:var(--text)">${all.length}</strong> (Ерөнхий: ${all.filter(i=>i.type==='general').length}, HABEA: ${hi.length}, Яаралтай: ${all.filter(i=>i.type==='urgent').length})<br>
-      Өдөр бүр давтагдах: <strong style="color:var(--ev)">${all.filter(i=>i.everyday).length}</strong><br>
+      Нийт заавар: <strong style="color:var(--text)">${INSTRS.length}</strong><br>
       Нийт ажилтан: <strong style="color:var(--text)">${ws.length}</strong><br>
-      Нийт хүлээн авалт: <strong style="color:var(--green)">${totalAcks}</strong> / ${poss}<br>
-      Нийт хамрагдалт: <strong style="color:var(--amber)">${poss?Math.round(totalAcks/poss*100):0}%</strong><br>
+      Нийт хүлээн авалт: <strong style="color:var(--green)">${ACKS.length}</strong> / ${poss}<br>
+      Нийт хамрагдалт: <strong style="color:var(--amber)">${poss?Math.round(ACKS.length/poss*100):0}%</strong><br>
       HABEA хамрагдалт: <strong style="color:var(--hb)">${hposs?Math.round(haAcks/hposs*100):0}%</strong>
     </div>
   </div>
   <div class="card" style="display:flex;flex-direction:column;gap:10px">
     <div class="ct">Excel файл татаж авах</div>
-    <p style="font-size:12px;color:var(--text2)">5 хуудас бүхий .xlsx тайлан. HABEA болон өдөр бүр тусдаа хуудас.</p>
     <button class="expbtn" onclick="exportExcel()">📥 Excel татаж авах (.xlsx)</button>
     <div style="font-size:10px;color:var(--text3);line-height:1.9">
-      📋 Хуудас 1: Дэлгэрэнгүй жагсаалт<br>🔷 Хуудас 2: HABEA тайлан<br>📊 Хуудас 3: Ажилтан хураангуй<br>📅 Хуудас 4: Заавар хураангуй<br>🔄 Хуудас 5: Өдөр бүр давтагдах
+      📋 Хуудас 1: Дэлгэрэнгүй жагсаалт<br>🔷 Хуудас 2: HABEA тайлан<br>📊 Хуудас 3: Ажилтан хураангуй
     </div>
   </div>
-</div>
-<div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div class="ct" style="margin-bottom:0">Урьдчилан харах (эхний 10×8)</div>
-    <button class="expbtn" onclick="exportExcel()" style="font-size:11px;padding:5px 11px">📥 Татах</button>
-  </div>
-  <div class="tw" style="max-height:380px"><table>
-    <thead><tr><th style="width:90px">Огноо</th><th style="width:75px">Төрөл</th><th>Заавар</th><th style="width:80px">Ажилтан</th><th style="width:70px">Авсан</th><th style="width:110px">Огноо цаг</th></tr></thead>
-    <tbody>${all.slice(0,10).flatMap(i=>ws.slice(0,8).map(w=>{const ack=getAck(i,w.id);
-      return `<tr>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄':i.date}</td>
-        <td>${tBadge(i.type,false)}</td>
-        <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)">${i.text.length>38?i.text.slice(0,38)+'…':i.text}</td>
-        <td class="tdm">${w.name}</td>
-        <td><span class="badge ${ack?'bgg':'bgr'}">${ack?'Авсан':'Аваагүй'}</span></td>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${ack?ack.datetime||ack.time:'—'}</td>
-      </tr>`;})).join('')}</tbody>
-  </table></div>
 </div>`;
 }
 
 // ============================================================
-// ADMIN — WORKERS (paginated + search)
+// WORKERS
 // ============================================================
 function rWorkers(){
   const ws=workers();
@@ -939,16 +910,16 @@ function rWorkers(){
     <div class="tw" style="max-height:500px"><table>
       <thead><tr><th style="width:36px">#</th><th>Нэр</th><th style="width:110px">Нэвтрэх нэр</th><th style="width:140px">Мэргэжил</th><th style="width:100px">Утас</th><th style="width:80px">Авсан/Нийт</th><th style="width:70px">HABEA</th></tr></thead>
       <tbody>${sl.map((w,idx)=>{
-        const tk=DB.instructions.filter(i=>getAck(i,w.id));
-        const hbtk=DB.instructions.filter(i=>i.type==='habea'&&getAck(i,w.id)).length;
-        const hbtot=DB.instructions.filter(i=>i.type==='habea').length;
+        const tk=INSTRS.filter(i=>getAck(i,w.id)).length;
+        const hbtk=INSTRS.filter(i=>i.type==='habea'&&getAck(i,w.id)).length;
+        const hbtot=INSTRS.filter(i=>i.type==='habea').length;
         return `<tr>
           <td style="color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:10px">${(pg-1)*WPP+idx+1}</td>
           <td class="tdm">${w.name}</td>
           <td style="font-family:'IBM Plex Mono',monospace;color:var(--text3);font-size:11px">${w.username}</td>
           <td style="font-size:11px;color:var(--text2)">${w.profession||'<span style="color:var(--text3)">—</span>'}</td>
           <td style="font-size:11px;color:var(--text2);font-family:'IBM Plex Mono',monospace">${w.phone||'<span style="color:var(--text3)">—</span>'}</td>
-          <td><span class="badge bgb">${tk.length}/${DB.instructions.length}</span></td>
+          <td><span class="badge bgb">${tk}/${INSTRS.length}</span></td>
           <td><span class="badge bgh">${hbtk}/${hbtot}</span></td>
         </tr>`;}).join('')}</tbody>
     </table></div>
@@ -957,10 +928,10 @@ function rWorkers(){
 }
 
 // ============================================================
-// ADMIN — MANAGE USERS (paginated + search)
+// MANAGE USERS
 // ============================================================
 function rMU(){
-  const all=DB.users;
+  const all=USERS;
   const fil=wSrch?all.filter(u=>u.name.toLowerCase().includes(wSrch)||u.username.toLowerCase().includes(wSrch)):all;
   const tp=Math.ceil(fil.length/WPP),pg=Math.min(wPage,tp||1);
   const sl=fil.slice((pg-1)*WPP,pg*WPP);
@@ -982,7 +953,7 @@ function rMU(){
       <div class="ct" style="margin-bottom:0">Бүх хэрэглэгчид (${all.length})</div>
     </div>
     <div class="srow"><input class="si" placeholder="Нэр, нэвтрэх нэрээр хайх..." value="${wSrch}" oninput="wSrch=this.value.toLowerCase();wPage=1;navigate('mu')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length}</span></div>
-    <div style="max-height:450px;overflow-y:auto">
+    <div style="max-height:460px;overflow-y:auto">
     ${sl.map(u=>{const isSelf=u.id===CU.id;return `
       <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)">
         <div style="width:32px;height:32px;border-radius:50%;background:${u.role==='admin'?'var(--accent-glow)':'var(--bg4)'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${u.role==='admin'?'var(--accent)':'var(--text2)'};flex-shrink:0">${u.name[0]}</div>
@@ -990,8 +961,8 @@ function rMU(){
           <div style="font-size:12px;font-weight:500;color:var(--text)">${u.name}${isSelf?' <span style="font-size:10px;color:var(--text3)">(та)</span>':''}</div>
           <div style="font-size:10px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace;margin-top:1px">${u.username} · <span class="badge ${u.role==='admin'?'bgb':'bgg'}" style="font-size:9px">${u.role==='admin'?'Админ':'Ажилтан'}</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:3px;flex-wrap:wrap">
-            ${u.profession?`<span style="font-size:10px;color:var(--text2);display:inline-flex;align-items:center;gap:3px">💼 ${u.profession}</span>`:''}
-            ${u.phone?`<span style="font-size:10px;color:var(--text2);display:inline-flex;align-items:center;gap:3px">📞 ${u.phone}</span>`:''}
+            ${u.profession?`<span style="font-size:10px;color:var(--text2)">💼 ${u.profession}</span>`:''}
+            ${u.phone?`<span style="font-size:10px;color:var(--text2)">📞 ${u.phone}</span>`:''}
           </div>
         </div>
         <div style="display:flex;gap:4px;flex-shrink:0">
@@ -1005,8 +976,7 @@ function rMU(){
 </div>`;
 }
 
-function addUser(){
-  DB=loadDB();
+async function addUser(){
   const name=document.getElementById('nuNm').value.trim();
   const username=document.getElementById('nuUsr').value.trim();
   const password=document.getElementById('nuPw').value.trim();
@@ -1015,30 +985,31 @@ function addUser(){
   const role=document.getElementById('nuRl').value;
   const err=document.getElementById('nuErr');
   if(!name||!username||!password){err.textContent='Нэр, нэвтрэх нэр, нууц үг шаардлагатай!';return;}
-  if(DB.users.find(u=>u.username===username)){err.textContent='Нэвтрэх нэр аль хэдийн бүртгэлтэй!';return;}
-  err.textContent='';
-  DB.users.push({id:Date.now(),name,username,password,role,profession,phone});
-  saveDB(DB);showToast(name+' нэмэгдлээ!','g');navigate('mu');
+  const {error}=await sb.from('users').insert({name,username,password,role,profession,phone});
+  if(error){err.textContent=error.code==='23505'?'Нэвтрэх нэр аль хэдийн бүртгэлтэй!':'Алдаа: '+error.message;return;}
+  err.textContent='';showToast(name+' нэмэгдлээ!','g');navigate('mu');
 }
-function delUser(id){
-  DB=loadDB();const u=DB.users.find(x=>x.id===id);if(!u)return;
+async function delUser(id){
+  const u=USERS.find(x=>x.id===id);if(!u)return;
   if(!confirm(u.name+'-г устгах уу?'))return;
-  DB.users=DB.users.filter(x=>x.id!==id);
-  DB.instructions.forEach(i=>{Object.keys(i.acks).filter(k=>k===String(id)||k.endsWith('_'+id)).forEach(k=>delete i.acks[k]);});
-  saveDB(DB);showToast(u.name+' устгагдлаа');navigate('mu');
+  await sb.from('acknowledgements').delete().eq('user_id',id);
+  await sb.from('users').delete().eq('id',id);
+  showToast(u.name+' устгагдлаа');navigate('mu');
 }
 function openEU(id){
-  DB=loadDB();const u=DB.users.find(x=>x.id===id);if(!u)return;
-  document.getElementById('euId').value=id;document.getElementById('euNm').value=u.name;
-  document.getElementById('euUsr').value=u.username;document.getElementById('euPw').value='';
+  const u=USERS.find(x=>x.id===id);if(!u)return;
+  document.getElementById('euId').value=id;
+  document.getElementById('euNm').value=u.name;
+  document.getElementById('euUsr').value=u.username;
+  document.getElementById('euPw').value='';
   document.getElementById('euProf').value=u.profession||'';
   document.getElementById('euPhone').value=u.phone||'';
-  document.getElementById('euRl').value=u.role;document.getElementById('euErr').textContent='';
+  document.getElementById('euRl').value=u.role;
+  document.getElementById('euErr').textContent='';
   document.getElementById('euModal').classList.add('open');
 }
 function closeEU(){document.getElementById('euModal').classList.remove('open');}
-function saveEU(){
-  DB=loadDB();
+async function saveEU(){
   const id=Number(document.getElementById('euId').value);
   const name=document.getElementById('euNm').value.trim();
   const username=document.getElementById('euUsr').value.trim();
@@ -1048,40 +1019,21 @@ function saveEU(){
   const role=document.getElementById('euRl').value;
   const err=document.getElementById('euErr');
   if(!name||!username){err.textContent='Нэр болон нэвтрэх нэр шаардлагатай!';return;}
-  if(DB.users.find(u=>u.username===username&&u.id!==id)){err.textContent='Нэвтрэх нэр аль хэдийн бүртгэлтэй!';return;}
-  const u=DB.users.find(x=>x.id===id);if(!u)return;
-  u.name=name;u.username=username;u.role=role;u.profession=profession;u.phone=phone;
-  if(password)u.password=password;
+  const upd={name,username,role,profession,phone};
+  if(password) upd.password=password;
+  const {error}=await sb.from('users').update(upd).eq('id',id);
+  if(error){err.textContent='Алдаа: '+error.message;return;}
   if(CU.id===id){CU.name=name;CU.username=username;CU.role=role;}
-  saveDB(DB);closeEU();showToast('Хадгалагдлаа!','g');navigate('mu');
+  closeEU();showToast('Хадгалагдлаа!','g');navigate('mu');
 }
 
 // ============================================================
-// PAGINATION HELPER
-// ============================================================
-function pagCtrl(cur,total,varName,page,tot){
-  if(total<=1)return '';
-  const w=Math.min(total,7);let s=Math.max(1,cur-3),e=Math.min(total,s+w-1);
-  if(e-s<w-1)s=Math.max(1,e-w+1);
-  let b='';
-  if(s>1)b+=`<button class="pb" onclick="${varName}=1;navigate('${page}')">1</button>${s>2?'<span style="color:var(--text3);font-size:10px;padding:0 2px">…</span>':''}`;
-  for(let p=s;p<=e;p++)b+=`<button class="pb${p===cur?' cur':''}" onclick="${varName}=${p};navigate('${page}')">${p}</button>`;
-  if(e<total)b+=`${e<total-1?'<span style="color:var(--text3);font-size:10px;padding:0 2px">…</span>':''}<button class="pb" onclick="${varName}=${total};navigate('${page}')">${total}</button>`;
-  return `<div class="pag">
-    ${cur>1?`<button class="pb" onclick="${varName}=${cur-1};navigate('${page}')">←</button>`:''}
-    ${b}
-    ${cur<total?`<button class="pb" onclick="${varName}=${cur+1};navigate('${page}')">→</button>`:''}
-    <span class="pinfo">${(cur-1)*WPP+1}–${Math.min(cur*WPP,tot)} / ${tot}</span>
-  </div>`;
-}
-
-// ============================================================
-// WORKER — TODAY (general only)
+// WORKER — TODAY
 // ============================================================
 function rToday(){
   const uid=CU.id;
-  const gen=DB.instructions.filter(i=>i.type!=='habea'&&activeToday(i)&&targMatch(i,uid));
-  const unread=[...DB.instructions].filter(i=>i.type!=='habea'&&!getAck(i,uid)&&targMatch(i,uid)&&!activeToday(i)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'))[0];
+  const gen=INSTRS.filter(i=>i.type!=='habea'&&activeToday(i)&&targMatch(i,uid));
+  const unread=INSTRS.filter(i=>i.type!=='habea'&&!getAck(i,uid)&&targMatch(i,uid)&&!activeToday(i)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'))[0];
   let html='';
   if(unread){
     html+=`<div style="background:var(--abg);border:1px solid var(--abd);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
@@ -1102,29 +1054,26 @@ function rToday(){
 }
 
 // ============================================================
-// WORKER — HABEA (tусдаа dashboard)
+// WORKER — HABEA
 // ============================================================
 function rHabeaW(){
   const uid=CU.id;
-  const hi=DB.instructions.filter(i=>i.type==='habea'&&targMatch(i,uid)).sort((a,b)=>{
+  const hi=INSTRS.filter(i=>i.type==='habea'&&targMatch(i,uid)).sort((a,b)=>{
     if(a.everyday&&!b.everyday)return -1;if(b.everyday&&!a.everyday)return 1;
     return (b.date||'9999').localeCompare(a.date||'9999');
   });
   const todH=hi.filter(i=>activeToday(i));
   const total=hi.length,taken=hi.reduce((s,i)=>s+(getAck(i,uid)?1:0),0);
-
   let html=`
 <div class="hbhdr">
   <div class="hbico">🔷</div>
-  <div style="flex:1"><div class="hbttl">HABEA Зааварчилгаа</div><div class="hbsub">Миний HABEA зааварчилгааны жагсаалт — өнөөдрийн болон өмнөх</div></div>
+  <div style="flex:1"><div class="hbttl">HABEA Зааварчилгаа</div><div class="hbsub">Миний HABEA зааварчилгааны жагсаалт</div></div>
   <div style="text-align:right"><div style="font-size:20px;font-weight:600;color:var(--hb);font-family:'IBM Plex Mono',monospace">${taken}/${total}</div><div style="font-size:10px;color:var(--text3)">хүлээн авсан</div></div>
 </div>`;
-
   if(todH.length){
     html+=`<div style="font-size:10px;font-weight:600;color:var(--hb);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Өнөөдрийн HABEA — ${today()}</div>`;
     html+=todH.map(i=>wCard(i,uid)).join('');
   }
-
   const past=hi.filter(i=>!activeToday(i));
   if(past.length){
     html+=`<div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin:14px 0 8px">Өмнөх HABEA заавруудыг харах</div>`;
@@ -1134,12 +1083,11 @@ function rHabeaW(){
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">${tBadge(i.type,i.everyday)}<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--hb)">${i.date||'Байнга'}</span></div>
           <div style="font-size:12px;color:var(--text);line-height:1.6">${i.text}</div>
-          ${ack?`<div style="font-size:10px;color:var(--green);margin-top:4px;font-family:'IBM Plex Mono',monospace">✔ Авсан: ${ack.datetime||ack.time}</div>`:'<div style="font-size:10px;color:var(--red);margin-top:4px">Аваагүй</div>'}
+          ${ack?`<div style="font-size:10px;color:var(--green);margin-top:4px">✔ Авсан</div>`:'<div style="font-size:10px;color:var(--red);margin-top:4px">Аваагүй</div>'}
         </div>
         <span class="badge ${ack?'bgg':'bgr'}" style="flex-shrink:0">${ack?'Авсан':'Аваагүй'}</span>
       </div>`;}).join('')}
-
-  if(!todH.length&&!past.length)html+='<div style="text-align:center;padding:60px 20px;color:var(--text3)"><div style="font-size:28px;margin-bottom:10px;opacity:.5">🔷</div><div style="font-size:13px">HABEA заавар байхгүй</div></div>';
+  if(!todH.length&&!past.length) html+='<div style="text-align:center;padding:60px 20px;color:var(--text3)"><div style="font-size:28px;margin-bottom:10px;opacity:.5">🔷</div><div style="font-size:13px">HABEA заавар байхгүй</div></div>';
   return html;
 }
 
@@ -1155,7 +1103,7 @@ function wCard(i,uid){
     <div class="icfoot">
       ${acked
         ?`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <div style="padding:6px 12px;background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--rs);color:var(--green);font-size:11px">✔ Хүлээн авлаа — ${ack.datetime||ack.time}</div>
+            <div style="padding:6px 12px;background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--rs);color:var(--green);font-size:11px">✔ Хүлээн авлаа</div>
             ${ack.sig?`<img class="sth" src="${ack.sig}" onclick="viewSig('${ack.sig}','${CU.name}')" title="Гарын үсэг" style="height:30px;width:auto">`:'<span style="font-size:10px;color:var(--text3);font-style:italic">гарын үсэггүй</span>'}
           </div>`
         :`<button style="padding:8px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);cursor:pointer;font-size:12px;transition:all .15s;font-family:'IBM Plex Sans',sans-serif" onmouseover="this.style.background='var(--gbg)';this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.background='var(--bg3)';this.style.borderColor='var(--border2)';this.style.color='var(--text)'" onclick="openSigM(${i.id})">✍️ Гарын үсэг зурж хүлээн авах</button>`}
@@ -1164,11 +1112,11 @@ function wCard(i,uid){
 }
 
 // ============================================================
-// WORKER — HISTORY (general only)
+// WORKER — HISTORY
 // ============================================================
 function rHistory(){
   const uid=CU.id;
-  const sorted=[...DB.instructions].filter(i=>i.type!=='habea'&&targMatch(i,uid)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const sorted=INSTRS.filter(i=>i.type!=='habea'&&targMatch(i,uid)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
   const total=sorted.length,taken=sorted.reduce((s,i)=>s+(getAck(i,uid)?1:0),0);
   return `
 <div class="sg sg3" style="margin-bottom:14px">
@@ -1187,10 +1135,7 @@ function rHistory(){
           ${tBadge(i.type,i.everyday)}
         </div>
         <div style="font-size:12px;color:var(--text);line-height:1.6">${i.text}</div>
-        ${ack?`<div style="display:flex;align-items:center;gap:9px;margin-top:6px">
-          <span style="font-size:10px;color:var(--green);font-family:'IBM Plex Mono',monospace">Авсан: ${ack.datetime||ack.time}</span>
-          ${ack.sig?`<img class="sth" src="${ack.sig}" onclick="viewSig('${ack.sig}','${CU.name}')">`:''}
-        </div>`:'<div style="font-size:10px;color:var(--red);margin-top:4px">Аваагүй</div>'}
+        ${ack?`<div style="font-size:10px;color:var(--green);margin-top:6px">✔ Авсан</div>`:'<div style="font-size:10px;color:var(--red);margin-top:4px">Аваагүй</div>'}
       </div>
       <span class="badge ${ack?'bgg':'bgr'}" style="flex-shrink:0">${ack?'Авсан':'Аваагүй'}</span>
     </div>`;}).join('')}
@@ -1203,7 +1148,7 @@ function rHistory(){
 let sigCanvas,sigCtx,isDrawing=false,hasSig=false,lastX=0,lastY=0;
 function openSigM(id){
   pendingSigId=id;
-  const i=DB.instructions.find(x=>x.id===id);
+  const i=INSTRS.find(x=>x.id===id);
   document.getElementById('sigSub').textContent=i?`"${i.text.slice(0,60)}${i.text.length>60?'…':''}"`:'' ;
   document.getElementById('sigModal').classList.add('open');
   setTimeout(initSP,50);
@@ -1227,12 +1172,19 @@ function gp(e){const r=sigCanvas.getBoundingClientRect();return[(e.clientX-r.lef
 function dr(e){const [x,y]=gp(e);sigCtx.beginPath();sigCtx.moveTo(lastX,lastY);sigCtx.lineTo(x,y);sigCtx.stroke();[lastX,lastY]=[x,y];if(!hasSig){hasSig=true;document.getElementById('sigPh').style.display='none';}}
 function clearSig(){if(!sigCtx)return;sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);hasSig=false;document.getElementById('sigPh').style.display='block';}
 function closeSig(){document.getElementById('sigModal').classList.remove('open');pendingSigId=null;}
-function confirmSig(){
+async function confirmSig(){
   if(!hasSig){showToast('Гарын үсэг зурна уу!');return;}
   const sig=sigCanvas.toDataURL('image/png');
-  DB=loadDB();const i=DB.instructions.find(x=>x.id===pendingSigId);if(!i){closeSig();return;}
-  setAck(i,CU.id,{time:nowTime(),datetime:nowDT(),sig});
-  saveDB(DB);closeSig();showToast('Амжилттай баталгаажуулав!','g');
+  const i=INSTRS.find(x=>x.id===pendingSigId);if(!i){closeSig();return;}
+  const {error}=await sb.from('acknowledgements').upsert({
+    instruction_id:i.id,
+    user_id:CU.id,
+    ack_date:today(),
+    sig,
+    signed_at:new Date().toISOString()
+  },{onConflict:'instruction_id,user_id,ack_date'});
+  if(error){showToast('Алдаа: '+error.message);return;}
+  closeSig();showToast('Амжилттай баталгаажуулав!','g');
   navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'today');
 }
 function viewSig(src,name){document.getElementById('svT').textContent=name+' — гарын үсэг';document.getElementById('svI').src=src;document.getElementById('sigVM').classList.add('open');}
@@ -1242,25 +1194,16 @@ document.addEventListener('click',e=>{
 });
 
 // ============================================================
-// EXCEL EXPORT
+// EXCEL
 // ============================================================
 function exportExcel(){
-  DB=loadDB();
   const ws_=workers();
-  const all=[...DB.instructions].sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
-  const hi=all.filter(i=>i.type==='habea');
-  const ev=all.filter(i=>i.everyday);
-
-  const mkR=(i,w)=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,tLabel(i.type),i.everyday?'Тийм':'Үгүй',i.text,w.name,ack?'Авсан':'Аваагүй',ack?(ack.datetime||ack.time):'—',ack&&ack.sig?'Байна':'Байхгүй'];};
-
-  const det=[['Огноо/Горим','Төрөл','Өдөр бүр?','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг','Гарын үсэг'],...all.flatMap(i=>ws_.map(w=>mkR(i,w)))];
-  const hdet=[['Огноо/Горим','Өдөр бүр?','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг','Гарын үсэг'],...hi.flatMap(i=>ws_.map(w=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,i.everyday?'Тийм':'Үгүй',i.text,w.name,ack?'Авсан':'Аваагүй',ack?(ack.datetime||ack.time):'—',ack&&ack.sig?'Байна':'Байхгүй'];}))];
-  const wsum=[['Ажилтан','Нэвтрэх нэр','Мэргэжил','Утасны дугаар','Нийт заавар','Авсан','Аваагүй','Хувь (%)','HABEA авсан','HABEA нийт','HABEA хувь (%)'],...ws_.map(w=>{const tk=all.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);const htk=hi.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);return[w.name,w.username,w.profession||'',w.phone||'',all.length,tk,all.length-tk,all.length?Math.round(tk/all.length*100):0,htk,hi.length,hi.length?Math.round(htk/hi.length*100):0];})];
-  const isum=[['Огноо','Төрөл','Өдөр бүр?','Агуулга','Авсан','Нийт','Хувь (%)','Аваагүй ажилтнууд'],...all.map(i=>{const cnt=ws_.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0);const ms=ws_.filter(w=>!getAck(i,w.id)).map(w=>w.name).join(', ');return[i.everyday?'Өдөр бүр':i.date,tLabel(i.type),i.everyday?'Тийм':'Үгүй',i.text,cnt,ws_.length,ws_.length?Math.round(cnt/ws_.length*100):0,ms||'—'];})];
-  const evsum=[['Агуулга','Төрөл','Өнөөдрийн авсан','Нийт ажилтан','Хувь (%)','Аваагүй ажилтнууд'],...ev.map(i=>{const cnt=ws_.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0);const ms=ws_.filter(w=>!getAck(i,w.id)).map(w=>w.name).join(', ');return[i.text,tLabel(i.type),cnt,ws_.length,ws_.length?Math.round(cnt/ws_.length*100):0,ms||'—'];})];
-
+  const hi=INSTRS.filter(i=>i.type==='habea');
+  const det=[['Огноо','Төрөл','Өдөр бүр?','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг'],...INSTRS.flatMap(i=>ws_.map(w=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,tLabel(i.type),i.everyday?'Тийм':'Үгүй',i.text,w.name,ack?'Авсан':'Аваагүй',ack?new Date(ack.signed_at).toLocaleString('mn-MN'):'—'];}))];
+  const hdet=[['Огноо','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг'],...hi.flatMap(i=>ws_.map(w=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,i.text,w.name,ack?'Авсан':'Аваагүй',ack?new Date(ack.signed_at).toLocaleString('mn-MN'):'—'];}))];
+  const wsum=[['Ажилтан','Нэвтрэх нэр','Мэргэжил','Утас','Нийт заавар','Авсан','Аваагүй','Хувь (%)','HABEA авсан','HABEA нийт'],...ws_.map(w=>{const tk=INSTRS.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);const htk=hi.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);return[w.name,w.username,w.profession||'',w.phone||'',INSTRS.length,tk,INSTRS.length-tk,INSTRS.length?Math.round(tk/INSTRS.length*100):0,htk,hi.length];})];
   const wb=XLSX.utils.book_new();
-  [[det,'Дэлгэрэнгүй жагсаалт',8],[hdet,'HABEA тайлан',7],[wsum,'Ажилтан хураангуй',11],[isum,'Заавар хураангуй',8],[evsum,'Өдөр бүр давтагдах',6]].forEach(([data,name,cols])=>{
+  [[det,'Дэлгэрэнгүй жагсаалт',7],[hdet,'HABEA тайлан',5],[wsum,'Ажилтан хураангуй',10]].forEach(([data,name,cols])=>{
     const sh=XLSX.utils.aoa_to_sheet(data);stX(sh,data.length,cols);
     sh['!cols']=Array(cols).fill({wch:14});if(sh['!cols'][3])sh['!cols'][3]={wch:40};
     XLSX.utils.book_append_sheet(wb,sh,name);
@@ -1275,33 +1218,69 @@ function stX(ws,rows,cols){
 }
 
 // ============================================================
-// NOTIFICATIONS
+// ONESIGNAL PUSH NOTIFICATION
 // ============================================================
-let notifOn=false,hbTimer=null;
-const HBK='bsoft_hb_v2';
-async function toggleNotif(){
-  if(!('Notification'in window)){showToast('Browser notification дэмждэггүй!');return;}
-  if(notifOn){notifOn=false;stopHBT();updateNUI();showToast('Notification унтраагдлаа.');return;}
-  if(Notification.permission==='granted'){enableN();return;}
-  const p=await Notification.requestPermission();
-  if(p==='granted')enableN();else showToast('Notification зөвшөөрөл татгалзлаа.');
+async function sendPushToAll(title, message){
+  try{
+    await fetch('https://api.onesignal.com/notifications',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Key '+OS_REST_KEY
+      },
+      body:JSON.stringify({
+        app_id: OS_APP_ID,
+        included_segments: ['All'],
+        headings: {mn: title, en: title},
+        contents: {mn: message, en: message},
+        url: window.location.href
+      })
+    });
+  }catch(e){console.log('Push notification алдаа:',e);}
 }
-function enableN(){notifOn=true;updateNUI();startHBT();showToast('🔔 Notification идэвхжлээ!','g');setTimeout(()=>pN('✅ WorkFlow','Та цаашид шинэ зааварчилгааны мэдэгдэл хүлээн авна.','welcome'),600);}
-function updateNUI(){const d=document.getElementById('nDot'),l=document.getElementById('nLbl'),b=document.getElementById('nBtn');if(!d)return;if(notifOn){d.classList.add('on');l.textContent='Notification идэвхтэй';b.textContent='Унтраах';b.style.color='var(--red)';}else{d.classList.remove('on');l.textContent='Notification унтарсан';b.textContent='Асаах';b.style.color='';}}
-function pN(title,body,tag='wf'){if(!notifOn||Notification.permission!=='granted')return;const n=new Notification(title,{body,tag,requireInteraction:false});n.onclick=()=>{window.focus();n.close();if(CU)navigate(CU.role==='admin'?'dashboard':'today');};}
-function notifyNI(title,type){const tl={general:'Ерөнхий',habea:'🔷 HABEA',urgent:'🚨 Яаралтай'}[type]||'';pN(`📋 Шинэ заавар — ${tl}`,`"${title}" нийтлэгдлээ.`,'new-'+Date.now());}
-function startHBT(){stopHBT();hbTimer=setInterval(chkHB,30000);chkHB();}
-function stopHBT(){if(hbTimer){clearInterval(hbTimer);hbTimer=null;}}
-function chkHB(){if(!notifOn)return;const now=new Date(),h=now.getHours(),m=now.getMinutes(),dk=now.toISOString().slice(0,10);if(h===7&&m===30){const f=JSON.parse(localStorage.getItem(HBK)||'[]');if(!f.includes(dk)){f.push(dk);localStorage.setItem(HBK,JSON.stringify(f.slice(-60)));pN('🔔 HABEA — Өглөөний мэдэгдэл','Өнөөдрийн HABEA зааварчилгаа бэлэн байна. Нэвтэрч уншина уу.','habea-'+dk);showToast('🔔 HABEA автомат мэдэгдэл!','h');}}}
+
+async function toggleNotif(){
+  if(typeof OneSignal==='undefined'){showToast('OneSignal ачаалагдаагүй байна');return;}
+  try{
+    if(notifOn){
+      await OneSignal.User.PushSubscription.optOut();
+      notifOn=false;updateNUI();showToast('Notification унтраагдлаа.');
+    } else {
+      await OneSignal.User.PushSubscription.optIn();
+      notifOn=true;updateNUI();showToast('🔔 Notification идэвхжлээ!','g');
+    }
+  }catch(e){showToast('Notification тохиргооны алдаа');}
+}
+function updateNUI(){
+  const d=document.getElementById('nDot'),l=document.getElementById('nLbl'),b=document.getElementById('nBtn');
+  if(!d)return;
+  if(notifOn){d.classList.add('on');l.textContent='Notification идэвхтэй';b.textContent='Унтраах';b.style.color='var(--red)';}
+  else{d.classList.remove('on');l.textContent='Notification унтарсан';b.textContent='Асаах';b.style.color='';}
+}
 
 // ============================================================
-// TOAST
+// PAGINATION
+// ============================================================
+function pagCtrl(cur,total,varName,page,tot){
+  if(total<=1)return '';
+  const w=Math.min(total,7);let s=Math.max(1,cur-3),e=Math.min(total,s+w-1);
+  if(e-s<w-1)s=Math.max(1,e-w+1);
+  let b='';
+  if(s>1)b+=`<button class="pb" onclick="${varName}=1;navigate('${page}')">1</button>${s>2?'<span style="color:var(--text3);font-size:10px;padding:0 2px">…</span>':''}`;
+  for(let p=s;p<=e;p++)b+=`<button class="pb${p===cur?' cur':''}" onclick="${varName}=${p};navigate('${page}')">${p}</button>`;
+  if(e<total)b+=`${e<total-1?'<span style="color:var(--text3);font-size:10px;padding:0 2px">…</span>':''}<button class="pb" onclick="${varName}=${total};navigate('${page}')">${total}</button>`;
+  return `<div class="pag">
+    ${cur>1?`<button class="pb" onclick="${varName}=${cur-1};navigate('${page}')">←</button>`:''}
+    ${b}
+    ${cur<total?`<button class="pb" onclick="${varName}=${cur+1};navigate('${page}')">→</button>`:''}
+    <span class="pinfo">${(cur-1)*WPP+1}–${Math.min(cur*WPP,tot)} / ${tot}</span>
+  </div>`;
+}
+
+// ============================================================
+// TOAST & ICONS
 // ============================================================
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='g'?' tg':type==='h'?' th':'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
-
-// ============================================================
-// ICONS
-// ============================================================
 function iGrid(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`;}
 function iHb(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;}
 function iPlus(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;}
