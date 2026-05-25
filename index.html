@@ -2,11 +2,10 @@
 <html lang="mn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>B SOFT — Workflow</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -23,53 +22,77 @@
   --r:10px;--rs:6px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.6;-webkit-tap-highlight-color:transparent}
 input,textarea,select,button{font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--text)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:2px}
 
-.lp{display:flex;align-items:center;justify-content:center;height:100vh}
-.lbox{width:350px}
-.lbrand{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
-.ltitle{font-size:24px;font-weight:600;color:var(--text);margin-bottom:26px;line-height:1.3}
-.ltitle span{color:var(--text3)}
-.lcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px}
-.fl{margin-bottom:13px}
-.fl label{display:block;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-.fi{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;color:var(--text);outline:none;transition:border-color .15s}
-.fi:focus{border-color:var(--accent)}
+/* LOGIN — mobile-first redesign */
+.lp{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:24px 20px;
+  background:var(--bg);
+  background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(91,127,255,.12) 0%,transparent 68%);
+}
+.lbox{width:380px;max-width:100%}
+.lbrand{
+  font-size:11px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent);
+  font-family:'IBM Plex Mono',monospace;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.lbrand::before{content:'';display:inline-block;width:20px;height:2px;background:var(--accent);border-radius:2px}
+.ltitle{font-size:30px;font-weight:600;color:var(--text);margin-bottom:28px;line-height:1.2;letter-spacing:-.02em}
+.ltitle span{color:var(--text3);font-weight:300}
+.lcard{background:var(--bg2);border:1.5px solid var(--border2);border-radius:16px;padding:28px;box-shadow:0 32px 64px rgba(0,0,0,.5)}
+.fl{margin-bottom:18px}
+.fl label{display:block;font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.fi{
+  width:100%;background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:10px;padding:13px 16px;color:var(--text);outline:none;
+  transition:border-color .18s,box-shadow .18s;font-size:15px;
+}
+.fi:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,127,255,.13)}
 .fi::placeholder{color:var(--text3)}
 select.fi option{background:var(--bg3)}
-.ferr{font-size:12px;color:var(--red);margin-top:5px;min-height:16px}
-.lbtn{width:100%;padding:10px;background:var(--accent);border:none;border-radius:var(--rs);color:#fff;font-weight:500;cursor:pointer;margin-top:4px;transition:background .15s}
+.ferr{font-size:13px;color:var(--red);margin:6px 0 0;min-height:18px;text-align:center}
+.lbtn{
+  width:100%;padding:14px;background:var(--accent);border:none;
+  border-radius:10px;color:#fff;font-weight:600;font-size:15px;
+  cursor:pointer;margin-top:8px;transition:background .15s,transform .1s;
+  letter-spacing:.02em;
+}
 .lbtn:hover{background:var(--accent2)}
+.lbtn:active{transform:scale(.98)}
 
+/* LAYOUT */
 .layout{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:212px;min-width:212px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
-.sb-brand{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-family:'IBM Plex Mono',monospace}
-.sb-name{font-size:14px;font-weight:600;color:var(--text);margin-top:2px}
-.sb-nav{flex:1;padding:8px 6px;overflow-y:auto}
-.ng{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px 3px}
-.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rs);cursor:pointer;color:var(--text2);transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid var(--border)}
+.sb-brand{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-family:'IBM Plex Mono',monospace}
+.sb-name{font-size:15px;font-weight:600;color:var(--text);margin-top:3px;letter-spacing:-.01em}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto}
+.ng{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:10px 10px 4px}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:var(--text2);transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
 .ni:hover{background:var(--bg3);color:var(--text)}
 .ni.active{background:var(--accent-glow);color:var(--accent)}
 .ni.hni.active{background:var(--hbbg);color:var(--hb)}
 .ni.hni:hover{background:var(--hbbg);color:var(--hb)}
-.ni svg{width:14px;height:14px;flex-shrink:0}
-.ni span{font-size:12px;flex:1;text-align:left}
-.sbfoot{padding:12px 14px;border-top:1px solid var(--border)}
-.urow{display:flex;align-items:center;gap:9px;margin-bottom:9px}
-.av{width:28px;height:28px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-.unm{font-size:12px;font-weight:500;color:var(--text)}
-.url{font-size:10px;color:var(--text3)}
-.lobtn{width:100%;padding:7px;background:transparent;border:1px solid var(--border2);border-radius:var(--rs);color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s}
+.ni svg{width:15px;height:15px;flex-shrink:0}
+.ni span{font-size:13px;flex:1;text-align:left;font-weight:500}
+.sbfoot{padding:14px 16px;border-top:1px solid var(--border)}
+.urow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.av{width:32px;height:32px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.unm{font-size:13px;font-weight:600;color:var(--text)}
+.url{font-size:11px;color:var(--text3);margin-top:1px}
+.lobtn{width:100%;padding:8px;background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s}
 .lobtn:hover{background:var(--bg3);color:var(--text)}
-.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
-.topbar{padding:20px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
-.pgt{font-size:19px;font-weight:600;color:var(--text)}
-.pgs{font-size:11px;color:var(--text3);margin-top:2px}
-.content{padding:20px 24px;flex:1}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0;-webkit-overflow-scrolling:touch}
+.topbar{padding:22px 26px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.pgt{font-size:20px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.pgs{font-size:12px;color:var(--text3);margin-top:3px}
+.content{padding:20px 26px;flex:1}
 
+/* CARDS & COMMON */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px}
 .ct{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
 .sg{display:grid;gap:10px;margin-bottom:14px}
@@ -96,7 +119,7 @@ select.fi option{background:var(--bg3)}
 .bga{background:var(--abg);color:var(--amber);border-color:var(--abd)}
 .bgh{background:var(--hbbg);color:var(--hb);border-color:var(--hbbd)}
 .bgev{background:var(--evbg);color:var(--ev);border-color:var(--evbd)}
-.tw{overflow-x:auto;overflow-y:auto}
+.tw{overflow-x:auto;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .tw table{width:100%;border-collapse:collapse;table-layout:fixed}
 th{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;padding:8px 11px;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1}
 td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;vertical-align:middle}
@@ -124,6 +147,7 @@ tr:hover td{background:var(--bg3)}
 .ic{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:10px;transition:border-color .2s}
 .ic:hover{border-color:var(--border2)}
 .ichb{border-color:var(--hbbd);background:linear-gradient(135deg,var(--bg2),rgba(167,139,250,.04))}
+.icur{border-color:var(--rbd);background:linear-gradient(135deg,var(--bg2),rgba(240,107,107,.04))}
 .icmeta{display:flex;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap}
 .icbody{font-size:13px;color:var(--text);line-height:1.7}
 .icfoot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -141,21 +165,175 @@ tr:hover td{background:var(--bg3)}
 .sigph{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text3);pointer-events:none;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
 .sigacts{display:flex;gap:7px;margin-top:7px}
 .sth{width:68px;height:26px;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);object-fit:contain;cursor:pointer;vertical-align:middle}
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:16px}
 .overlay.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:490px;max-width:96vw;max-height:90vh;overflow-y:auto}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:490px;max-width:100%;max-height:90vh;overflow-y:auto}
 .mttl{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
 .msub{font-size:11px;color:var(--text3);margin-bottom:16px}
 .expbtn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--rs);color:var(--green);cursor:pointer;font-size:12px;transition:all .15s;font-family:'IBM Plex Sans',sans-serif}
 .expbtn:hover{background:rgba(45,212,160,.18)}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 16px;font-size:12px;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .25s;z-index:999;pointer-events:none}
+.toast{position:fixed;bottom:20px;right:20px;left:20px;max-width:340px;margin:0 auto;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 16px;font-size:12px;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .25s;z-index:999;pointer-events:none;text-align:center}
+@media(min-width:480px){.toast{right:20px;left:auto;margin:0;text-align:left}}
 .toast.show{transform:translateY(0);opacity:1}
 .tg{border-color:var(--gbd);color:var(--green)}
 .th{border-color:var(--hbbd);color:var(--hb)}
 .loading{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--text3);font-size:13px;gap:10px}
 .spin{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* WORKER — mobile-optimized cards */
+.wcard-ack-btn{
+  width:100%;padding:16px 18px;
+  background:linear-gradient(135deg,var(--bg3),var(--bg4));
+  border:1.5px solid var(--border2);
+  border-radius:10px;color:var(--text);
+  cursor:pointer;font-size:15px;font-weight:500;
+  transition:all .18s;font-family:'IBM Plex Sans',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  letter-spacing:.01em;
+}
+.wcard-ack-btn:hover,.wcard-ack-btn:active{
+  background:var(--gbg);border-color:var(--green);color:var(--green);
+  transform:scale(.99);
+}
+
+/* Worker instruction card */
+.wic{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:12px;padding:18px 16px;
+  margin-bottom:12px;transition:border-color .2s;
+}
+.wic:hover{border-color:var(--border2)}
+.wic-habea{border-color:rgba(167,139,250,.35);background:linear-gradient(135deg,var(--bg2),rgba(167,139,250,.04))}
+.wic-urgent{border-color:rgba(240,107,107,.35);background:linear-gradient(135deg,var(--bg2),rgba(240,107,107,.04))}
+.wic-done{border-color:rgba(45,212,160,.25);background:linear-gradient(135deg,var(--bg2),rgba(45,212,160,.03))}
+
+.wic-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.wic-dot{
+  width:10px;height:10px;border-radius:50%;
+  flex-shrink:0;margin-top:5px;
+}
+.wic-dot-g{background:var(--accent)}
+.wic-dot-h{background:var(--hb)}
+.wic-dot-u{background:var(--red)}
+.wic-dot-done{background:var(--green)}
+
+.wic-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px}
+.wic-body{font-size:15px;color:var(--text);line-height:1.7;letter-spacing:.005em}
+.wic-foot{margin-top:14px}
+
+.wic-done-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:var(--gbg);border:1px solid var(--gbd);
+  border-radius:8px;
+}
+.wic-done-txt{font-size:13px;color:var(--green);font-weight:600;flex:1}
+.wic-done-time{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
+
+/* Worker section headers */
+.wsec-hdr{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 0 10px;margin-bottom:4px;
+}
+.wsec-line{flex:1;height:1px;background:var(--border)}
+.wsec-lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+
+/* History items */
+.whist-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 0;border-bottom:1px solid var(--border);
+}
+.whist-icon{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;margin-top:1px;
+}
+.whist-icon-done{background:var(--gbg);color:var(--green)}
+.whist-icon-miss{background:var(--rbg);color:var(--red)}
+.whist-content{flex:1;min-width:0}
+.whist-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:4px}
+.whist-text{font-size:14px;color:var(--text);line-height:1.6}
+.whist-status{font-size:11px;margin-top:5px;font-weight:500}
+
+/* Worker unread alert */
+.w-alert{
+  display:flex;align-items:flex-start;gap:12px;
+  background:linear-gradient(135deg,rgba(245,166,35,.1),rgba(245,166,35,.04));
+  border:1.5px solid var(--abd);border-radius:12px;
+  padding:14px 16px;margin-bottom:16px;
+}
+.w-alert-ico{font-size:22px;flex-shrink:0;margin-top:1px}
+.w-alert-title{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:3px}
+.w-alert-sub{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* Stat cards for worker */
+.wstat{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:12px;padding:16px;text-align:center;
+}
+.wstat-v{font-size:28px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1.1;margin-bottom:4px}
+.wstat-l{font-size:11px;color:var(--text3);font-weight:500}
+
+/* RESPONSIVE */
 @media(max-width:900px){.sg4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){
+  .layout{flex-direction:column;height:100dvh}
+  .sidebar{
+    width:100%;min-width:unset;height:auto;
+    border-right:none;border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+  .sb-logo{
+    padding:14px 16px 12px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .sb-logo .sb-name{display:none}
+  .sb-nav{
+    display:flex;flex-wrap:nowrap;
+    overflow-x:auto;padding:8px 10px;gap:6px;
+    border-top:1px solid var(--border);
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .sb-nav::-webkit-scrollbar{display:none}
+  .ng{display:none}
+  .ni{
+    flex-direction:column;gap:4px;
+    padding:10px 14px;min-width:64px;
+    flex-shrink:0;border-radius:10px;
+  }
+  .ni span{font-size:10px;text-align:center;white-space:nowrap;font-weight:600}
+  .ni svg{width:20px;height:20px}
+  .ni.active{background:var(--accent-glow)}
+  .sbfoot{display:none}
+  .main{overflow-y:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch}
+  .topbar{padding:16px 16px 0}
+  .pgt{font-size:18px}
+  .pgs{font-size:11px}
+  .content{padding:14px 16px 32px}
+  .sg4,.sg3{grid-template-columns:repeat(2,1fr)}
+  .sg2,.fr2{grid-template-columns:1fr}
+  .modal{width:100%!important;max-width:100%!important;padding:18px}
+  .lbox{width:100%}
+  .card{padding:14px}
+  th,td{padding:8px 9px;font-size:11px}
+  .ic{padding:14px}
+  .wic{padding:16px 14px}
+  .wic-body{font-size:14px}
+  .wcard-ack-btn{padding:18px;font-size:15px}
+  .whist-item{padding:13px 0;gap:12px}
+  .whist-text{font-size:13px}
+  /* worker stat row */
+  .wstat{padding:14px 10px}
+  .wstat-v{font-size:24px}
+}
+@media(max-width:400px){
+  .sg4,.sg3,.sg2{grid-template-columns:repeat(2,1fr)}
+  .sv{font-size:20px}
+  .ni{min-width:56px;padding:9px 10px}
+}
 </style>
 </head>
 <body>
@@ -166,8 +344,18 @@ tr:hover td{background:var(--bg3)}
   <div class="lbrand">B SOFT LLC</div>
   <div class="ltitle">Нэвтрэх<br><span>системд</span></div>
   <div class="lcard">
-    <div class="fl"><label>Нэвтрэх нэр</label><input class="fi" id="lu" type="text" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="fl"><label>Нууц үг</label><input class="fi" id="lp2" type="password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="fl">
+      <label>Нэвтрэх нэр</label>
+      <input class="fi" id="lu" type="text" autocomplete="username"
+        placeholder="Нэвтрэх нэрээ оруулна уу"
+        onkeydown="if(event.key==='Enter')document.getElementById('lp2').focus()">
+    </div>
+    <div class="fl">
+      <label>Нууц үг</label>
+      <input class="fi" id="lp2" type="password" autocomplete="current-password"
+        placeholder="Нууц үгээ оруулна уу"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
     <div class="ferr" id="lerr"></div>
     <button class="lbtn" onclick="doLogin()">Нэвтрэх →</button>
   </div>
@@ -266,6 +454,7 @@ tr:hover td{background:var(--bg3)}
     <div style="margin-bottom:9px"><label class="lbl">Мэргэжил / Албан тушаал</label><input class="fi" id="euProf" type="text"></div>
     <div style="margin-bottom:9px"><label class="lbl">Утасны дугаар</label><input class="fi" id="euPhone" type="tel"></div>
     <div style="margin-bottom:14px"><label class="lbl">Эрх</label><select class="fi" id="euRl"><option value="worker">Ажилтан</option><option value="admin">Админ</option></select></div>
+    <div style="margin-bottom:14px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs)"><input type="checkbox" id="euLeave" style="accent-color:var(--amber);width:14px;height:14px;cursor:pointer"><span style="font-size:12px;color:var(--text)">😴 Амралттай (зааварчилгаа харагдахгүй)</span></label></div>
     <div class="ferr" id="euErr"></div>
     <div style="display:flex;gap:7px"><button class="btn btnp" style="flex:1" onclick="saveEU()">Хадгалах</button><button class="btn" onclick="closeEU()">Болих</button></div>
   </div>
@@ -279,8 +468,6 @@ tr:hover td{background:var(--bg3)}
 // ============================================================
 const SB_URL = 'https://koncffbcpvxuukhwkuvl.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbmNmZmJjcHZ4dXVraHdrdXZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1NTg5NjUsImV4cCI6MjA5MzEzNDk2NX0.W7sOxw502ql9vsC0aoNZZkWke2EPqkdVUIQoK-n4ezw';
-const OS_APP_ID = 'e8ba56d2-ff80-4934-90c5-573edda10ab3';
-const OS_REST_KEY = 'os_v2_app_5c5fnux7qbetjegfk47n3iikwods4qv2cqdetbm3qazowhvuaxuc7esay36i67cu7fndn2mylaxxridjoemykuzoozrre6nsh6ynwaq';
 
 const { createClient } = supabase;
 const sb = createClient(SB_URL, SB_KEY);
@@ -293,12 +480,34 @@ let wPage=1, iPage=1;
 const WPP=20, IPP=15;
 let wSrch='', iSrch='';
 let everyOn=false;
-
-
-// Cache
 let USERS=[], INSTRS=[], ACKS=[];
 
-function today(){return new Date().toISOString().slice(0,10);}
+// ============================================================
+// MIDNIGHT AUTO-REFRESH (шөнийн 00:00 цагт шинэчлэгдэх)
+// ============================================================
+function scheduleMidnightRefresh(){
+  const now=new Date();
+  const tomorrow=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,5); // 00:00:05
+  const ms=tomorrow-now;
+  setTimeout(async()=>{
+    if(CU){
+      await loadAll();
+      const activePage=document.querySelector('.ni.active')?.id?.replace('nav-','');
+      if(activePage) navigate(activePage);
+      showToast('Шинэ өдөр эхэллээ — '+today(),'g');
+    }
+    scheduleMidnightRefresh(); // дараагийн өдрийг schedule хийх
+  },ms);
+}
+
+function today(){
+  // UTC биш — local цагаар өдрийн огноо (Монгол UTC+8 зөв ажиллана)
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
 function nowTime(){return new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'});}
 function nowDT(){return new Date().toLocaleString('mn-MN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
 function workers(){return USERS.filter(u=>u.role==='worker');}
@@ -309,7 +518,9 @@ function tBadge(t,ev){
   return b;
 }
 function activeToday(i){return i.everyday||(i.date===today());}
+function isOnLeave(uid){const u=USERS.find(x=>x.id===Number(uid));return !!(u&&u.on_leave);}
 function targMatch(i,uid){
+  if(isOnLeave(uid)) return false;
   const t=i.targets;
   if(t==='all'||t===null||t===undefined) return true;
   const arr=Array.isArray(t)?t:(typeof t==='string'?JSON.parse(t):t);
@@ -327,24 +538,27 @@ function targLabel(i){
   if(names.length<=3) return names.map(n=>`<span class="badge bga" style="font-size:9px">${n}</span>`).join(' ');
   return `<span class="badge bga" style="font-size:9px">${names.slice(0,2).join(', ')} +${names.length-2}</span>`;
 }
-
-// Get ack for instruction+user (handles everyday date keying)
-function getAck(instr, uid){
-  return ACKS.find(a=>a.instruction_id===instr.id&&a.user_id===Number(uid)&&(instr.everyday?a.ack_date===today():true))||null;
+function getAck(instr,uid,forDate){
+  const date=forDate||today();
+  if(instr.everyday) return ACKS.find(a=>a.instruction_id===instr.id&&a.user_id===Number(uid)&&a.ack_date===date)||null;
+  return ACKS.find(a=>a.instruction_id===instr.id&&a.user_id===Number(uid))||null;
+}
+function getAckHistory(instr,uid){
+  return ACKS.filter(a=>a.instruction_id===instr.id&&a.user_id===Number(uid)).sort((a,b)=>b.ack_date.localeCompare(a.ack_date));
 }
 
 // ============================================================
 // DATA LOADING
 // ============================================================
 async function loadAll(){
-  const [ur, ir, ar] = await Promise.all([
+  const [ur,ir,ar]=await Promise.all([
     sb.from('users').select('*').order('id'),
-    sb.from('instructions').select('*').order('id', {ascending:false}),
+    sb.from('instructions').select('*').order('id',{ascending:false}),
     sb.from('acknowledgements').select('*')
   ]);
-  USERS = ur.data||[];
-  INSTRS = ir.data||[];
-  ACKS = ar.data||[];
+  USERS=ur.data||[];
+  INSTRS=ir.data||[];
+  ACKS=ar.data||[];
 }
 
 // ============================================================
@@ -355,10 +569,9 @@ async function doLogin(){
   const p=document.getElementById('lp2').value;
   const err=document.getElementById('lerr');
   err.textContent='Нэвтэрч байна...';
-  const {data,error}=await sb.from('users').select('*').eq('username',u).eq('password',p).single();
+  const{data,error}=await sb.from('users').select('*').eq('username',u).eq('password',p).single();
   if(error||!data){err.textContent='Нэвтрэх нэр эсвэл нууц үг буруу.';return;}
-  CU=data;
-  err.textContent='';
+  CU=data;err.textContent='';
   document.getElementById('loginPage').style.display='none';
   document.getElementById('appLayout').style.display='flex';
   await loadAll();
@@ -372,6 +585,14 @@ function doLogout(){
   document.getElementById('lp2').value='';
   document.getElementById('lerr').textContent='';
 }
+async function toggleLeave(uid){
+  const u=USERS.find(x=>x.id===uid);if(!u)return;
+  const newVal=!u.on_leave;
+  const{error}=await sb.from('users').update({on_leave:newVal}).eq('id',uid);
+  if(error){showToast('Алдаа: '+error.message);return;}
+  showToast(u.name+(newVal?' — амралтад орлоо 😴':' — ажилдаа ирлээ ✔'),newVal?'':'g');
+  navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'dashboard');
+}
 
 // ============================================================
 // APP INIT
@@ -381,6 +602,7 @@ function initApp(){
   document.getElementById('uNm').textContent=CU.name;
   document.getElementById('uRl').textContent=CU.role==='admin'?'Админ':'Ажилтан';
   buildNav();
+  scheduleMidnightRefresh();
   navigate(CU.role==='admin'?'dashboard':'today');
 }
 
@@ -388,20 +610,20 @@ function buildNav(){
   const nav=document.getElementById('sideNav');
   const ai=[
     {g:'Хяналт'},
-    {id:'dashboard',ic:iGrid,lb:'Хяналтын самбар'},
-    {id:'habea-db',ic:iHb,lb:'HABEA самбар',cl:'hni'},
+    {id:'dashboard',ic:iGrid,lb:'Самбар'},
+    {id:'habea-db',ic:iHb,lb:'HABEA',cl:'hni'},
     {g:'Заавар'},
-    {id:'add-instr',ic:iPlus,lb:'Заавар нэмэх'},
+    {id:'add-instr',ic:iPlus,lb:'Нэмэх'},
     {id:'tracking',ic:iChart,lb:'Хяналт'},
-    {id:'report',ic:iRep,lb:'Тайлан / Export'},
+    {id:'report',ic:iRep,lb:'Тайлан'},
     {g:'Хэрэглэгч'},
-    {id:'workers',ic:iUsers,lb:'Ажилтнууд'},
-    {id:'mu',ic:iUP,lb:'Хэрэглэгч удирдах'},
+    {id:'workers',ic:iUsers,lb:'Ажилтан'},
+    {id:'mu',ic:iUP,lb:'Удирдах'},
   ];
   const wi=[
-    {id:'today',ic:iClock,lb:'Өнөөдрийн заавар'},
-    {id:'habea-w',ic:iHb,lb:'HABEA заавар',cl:'hni'},
-    {id:'history',ic:iList,lb:'Зааврын түүх'},
+    {id:'today',ic:iClock,lb:'Өнөөдөр'},
+    {id:'habea-w',ic:iHb,lb:'HABEA',cl:'hni'},
+    {id:'history',ic:iList,lb:'Түүх'},
   ];
   const items=CU.role==='admin'?ai:wi;
   nav.innerHTML=items.map(it=>{
@@ -425,7 +647,7 @@ async function navigate(page){
     'habea-w':['HABEA заавар','Миний HABEA зааварчилгаа'],
     'history':['Зааврын түүх','Бүх заавруудын жагсаалт'],
   };
-  const [t,s]=T[page]||['',''];
+  const[t,s]=T[page]||['',''];
   document.getElementById('pgT').textContent=t;
   document.getElementById('pgS').textContent=s;
   document.getElementById('CA').innerHTML=`<div class="loading"><div class="spin"></div>Уншиж байна...</div>`;
@@ -435,6 +657,8 @@ async function navigate(page){
     'tracking':rTracking,'report':rReport,'workers':rWorkers,
     'mu':rMU,'today':rToday,'habea-w':rHabeaW,'history':rHistory,
   };
+  // Scroll to top on navigate (mobile)
+  document.querySelector('.main').scrollTop=0;
   document.getElementById('CA').innerHTML=(M[page]||(() =>''))();
 }
 
@@ -476,9 +700,10 @@ function rDash(){
       return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
         <div style="width:22px;height:22px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text2);flex-shrink:0">${w.name[0]}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px">${w.name} <span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${p2}%</span></div>
+          <div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px">${w.name}${w.on_leave?' <span class="badge bga" style="font-size:9px">😴</span>':''} <span style="font-size:10px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace">${p2}%</span></div>
           <div class="prog"><div class="pf" style="width:${p2}%;background:${p2===100?'var(--green)':'var(--accent)'}"></div></div>
         </div>
+        <button onclick="toggleLeave(${w.id})" style="flex-shrink:0;padding:3px 9px;border-radius:20px;border:1px solid ${w.on_leave?'var(--abd)':'var(--border2)'};background:${w.on_leave?'var(--abg)':'transparent'};color:${w.on_leave?'var(--amber)':'var(--text3)'};font-size:10px;cursor:pointer;font-family:\'IBM Plex Sans\',sans-serif;transition:all .15s">${w.on_leave?'😴':'✓'}</button>
       </div>`;}).join('')}
     </div>
   </div>
@@ -489,15 +714,15 @@ function rDash(){
     <button class="btn btnsm" onclick="navigate('tracking')">Бүгдийг харах →</button>
   </div>
   <div class="tw" style="max-height:300px"><table>
-    <thead><tr><th style="width:110px">Огноо/Горим</th><th style="width:90px">Төрөл</th><th>Агуулга</th><th style="width:65px">Авсан</th><th style="width:110px">Байдал</th></tr></thead>
+    <thead><tr><th style="width:90px">Огноо</th><th style="width:80px">Төрөл</th><th>Агуулга</th><th style="width:55px">Авсан</th><th style="width:90px">Байдал</th></tr></thead>
     <tbody>${sorted.map(i=>{
       const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
       return `<tr>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Байнга':i.date}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄':i.date}</td>
         <td>${tBadge(i.type,false)}</td>
         <td class="tdm" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.text}</td>
         <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${cnt}/${tot}</td>
-        <td><span class="badge ${cnt===tot?'bgg':cnt>0?'bga':'bgr'}">${cnt===tot?'Бүгд авсан':cnt>0?'Хэсэгчлэн':'Аваагүй'}</span></td>
+        <td><span class="badge ${cnt===tot?'bgg':cnt>0?'bga':'bgr'}">${cnt===tot?'Бүгд':cnt>0?'Хэсэгчлэн':'Аваагүй'}</span></td>
       </tr>`;}).join('')}</tbody>
   </table></div>
 </div>`;
@@ -510,23 +735,24 @@ function rHabeaDB(){
   const ws=workers();
   const hi=INSTRS.filter(i=>i.type==='habea');
   const todH=hi.filter(i=>activeToday(i));
-  const haAcks=ACKS.filter(a=>hi.find(i=>i.id===a.instruction_id)).length;
-  const poss=hi.length*ws.length, pct=poss?Math.round(haAcks/poss*100):0;
+  // Everyday HABEA: өнөөдрийн байдлаар тооцно (өдрөөс үл хамааран авсан эсэх)
+  const haAcks=hi.reduce((s,i)=>s+ws.reduce((s2,w)=>s2+(getAck(i,w.id)?1:0),0),0);
+  const poss=hi.length*ws.length,pct=poss?Math.round(haAcks/poss*100):0;
   return `
 <div class="hbhdr">
   <div class="hbico">🔷</div>
   <div style="flex:1"><div class="hbttl">HABEA Зааварчилгааны самбар</div><div class="hbsub">HABEA ангиллын бүх зааварчилгааны хяналт, статистик, гарын үсэг</div></div>
-  <button class="btn btnh btnsm" onclick="navigate('add-instr')">+ HABEA нэмэх</button>
+  <button class="btn btnh btnsm" onclick="navigate('add-instr')">+ HABEA</button>
 </div>
 <div class="sg sg4">
-  <div class="st"><div class="sv" style="color:var(--hb)">${hi.length}</div><div class="sl">Нийт HABEA заавар</div></div>
-  <div class="st"><div class="sv" style="color:var(--ev)">${hi.filter(i=>i.everyday).length}</div><div class="sl">Өдөр бүр давтагдах</div></div>
-  <div class="st"><div class="sv" style="color:var(--amber)">${pct}%</div><div class="sl">Нийт хамрагдалт</div></div>
+  <div class="st"><div class="sv" style="color:var(--hb)">${hi.length}</div><div class="sl">Нийт HABEA</div></div>
+  <div class="st"><div class="sv" style="color:var(--ev)">${hi.filter(i=>i.everyday).length}</div><div class="sl">Өдөр бүр</div></div>
+  <div class="st"><div class="sv" style="color:var(--amber)">${pct}%</div><div class="sl">Хамрагдалт</div></div>
   <div class="st"><div class="sv" style="color:${todH.length>0?'var(--green)':'var(--text3)'}">${todH.length}</div><div class="sl">Өнөөдрийн HABEA</div></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
   <div class="card" style="border-color:var(--hbbd)">
-    <div class="ct" style="color:var(--hb)">Ажилтан тус бүрийн HABEA хамрагдалт</div>
+    <div class="ct" style="color:var(--hb)">Ажилтан тус бүрийн HABEA</div>
     <div style="max-height:320px;overflow-y:auto">
     ${ws.map(w=>{
       const tk=hi.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0),tot=hi.length,p2=tot?Math.round(tk/tot*100):0;
@@ -541,7 +767,7 @@ function rHabeaDB(){
     </div>
   </div>
   <div class="card" style="border-color:var(--hbbd)">
-    <div class="ct" style="color:var(--hb)">Өнөөдрийн HABEA байдал</div>
+    <div class="ct" style="color:var(--hb)">Өнөөдрийн HABEA</div>
     ${todH.length===0?'<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">Өнөөдрийн HABEA байхгүй</div>':
     todH.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0),tot=ws.length;
       return `<div style="margin-bottom:10px;padding:10px;background:var(--hbbg);border:1px solid var(--hbbd);border-radius:var(--rs)">
@@ -670,10 +896,10 @@ function instrTbl(){
   const sl=fil.slice((pg-1)*IPP,pg*IPP);
   return `<div class="srow"><input class="si" placeholder="Заавар хайх..." value="${iSrch}" oninput="iSrch=this.value.toLowerCase();iPage=1;navigate('add-instr')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length} заавар</span></div>
 <div class="tw" style="max-height:380px"><table>
-  <thead><tr><th style="width:110px">Огноо/Горим</th><th style="width:80px">Төрөл</th><th>Агуулга</th><th style="width:100px">Хэнд</th><th style="width:60px">Авсан</th><th style="width:95px">Үйлдэл</th></tr></thead>
+  <thead><tr><th style="width:90px">Огноо</th><th style="width:80px">Төрөл</th><th>Агуулга</th><th style="width:90px">Хэнд</th><th style="width:55px">Авсан</th><th style="width:95px">Үйлдэл</th></tr></thead>
   <tbody>${sl.map(i=>{const cnt=ws.reduce((s,w)=>s+(getAck(i,w.id)?1:0),0);
     return `<tr>
-      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Байнга':i.date}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄':i.date}</td>
       <td>${tBadge(i.type,false)}</td>
       <td class="tdm" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.text}</td>
       <td>${targLabel(i)}</td>
@@ -722,8 +948,8 @@ async function addInstr(){
   const targets=getTargets();
   if(!txt){showToast('Зааврын агуулга хоосон байна!');return;}
   if(!everyOn&&!dt){showToast('Огноо сонгоно уу!');return;}
-  const {data,error}=await sb.from('instructions').insert({
-    date:dt, everyday:everyOn, type, text:txt,
+  const{data,error}=await sb.from('instructions').insert({
+    date:dt,everyday:everyOn,type,text:txt,
     targets:targets==='all'?'all':JSON.stringify(targets),
     created_by:CU.id
   }).select().single();
@@ -741,7 +967,6 @@ async function delInstr(id){
   navigate(document.querySelector('.ni.active')?.id?.replace('nav-','')||'add-instr');
 }
 
-// EDIT INSTR
 function eiTargAllChg(){
   const allCb=document.getElementById('eiTargAll');
   const list=document.getElementById('eiTargList');
@@ -790,8 +1015,8 @@ async function saveEI(){
   const txt=document.getElementById('eiText').value.trim();
   const targets=getEiTargets();
   if(!txt){showToast('Агуулга хоосон байна!');return;}
-  const {error}=await sb.from('instructions').update({
-    type, everyday:every, date:dt, text:txt,
+  const{error}=await sb.from('instructions').update({
+    type,everyday:every,date:dt,text:txt,
     targets:targets==='all'?'all':JSON.stringify(targets)
   }).eq('id',id);
   if(error){showToast('Алдаа: '+error.message);return;}
@@ -812,7 +1037,7 @@ function rTracking(){
   <div class="ct">Ажилтан тус бүрийн нийт дүн</div>
   <div class="srow"><input class="si" placeholder="Ажилтан хайх..." value="${wSrch}" oninput="wSrch=this.value.toLowerCase();navigate('tracking')"></div>
   <div class="tw" style="max-height:320px"><table>
-    <thead><tr><th>Ажилтан</th><th style="width:60px">Авсан</th><th style="width:60px">Аваагүй</th><th style="width:130px">Хувь</th><th style="width:80px">HABEA</th><th style="width:100px">Байдал</th></tr></thead>
+    <thead><tr><th>Ажилтан</th><th style="width:55px">Авсан</th><th style="width:55px">Аваагүй</th><th style="width:120px">Хувь</th><th style="width:75px">HABEA</th><th style="width:90px">Байдал</th></tr></thead>
     <tbody>${ws.filter(w=>!wSrch||w.name.toLowerCase().includes(wSrch)).map(w=>{
       const tk=INSTRS.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0),tot=INSTRS.length,ms=tot-tk,p2=tot?Math.round(tk/tot*100):0;
       const hbtk=INSTRS.filter(i=>i.type==='habea').reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
@@ -844,27 +1069,99 @@ function rTracking(){
 function rReport(){
   const ws=workers();
   const hi=INSTRS.filter(i=>i.type==='habea');
-  const haAcks=ACKS.filter(a=>hi.find(i=>i.id===a.instruction_id)).length;
-  const poss=INSTRS.length*ws.length,hposs=hi.length*ws.length;
+  const evInstrs=INSTRS.filter(i=>i.everyday);
+  const onceInstrs=INSTRS.filter(i=>!i.everyday);
+
+  // Нийт боломжит ack тоо: нэг удааны = заавар×ажилтан, everyday = ack_date тус бүр
+  const onceAcks=ACKS.filter(a=>onceInstrs.find(i=>i.id===a.instruction_id)).length;
+  const evAcks=ACKS.filter(a=>evInstrs.find(i=>i.id===a.instruction_id)).length;
+  const totalAcks=ACKS.length;
+  const oncePoss=onceInstrs.length*ws.length;
+
+  // Everyday HABEA: өнөөдрийн байдлаар тооцно
+  const haAcks=hi.reduce((s,i)=>s+ws.reduce((s2,w)=>s2+(getAck(i,w.id)?1:0),0),0);
+  const hposs=hi.length*ws.length;
+
+  // Өмнөх өдрүүдийн everyday ack байдал
+  const evDates=[...new Set(ACKS.filter(a=>evInstrs.find(i=>i.id===a.instruction_id)).map(a=>a.ack_date))].sort((a,b)=>b.localeCompare(a)).slice(0,14);
+
   return `
+<div class="sg sg4" style="margin-bottom:14px">
+  <div class="st"><div class="sv" style="color:var(--accent)">${INSTRS.length}</div><div class="sl">Нийт заавар</div></div>
+  <div class="st"><div class="sv" style="color:var(--green)">${totalAcks}</div><div class="sl">Нийт хүлээн авалт</div></div>
+  <div class="st"><div class="sv" style="color:var(--hb)">${haAcks}</div><div class="sl">HABEA хүлээн авалт</div></div>
+  <div class="st"><div class="sv" style="color:var(--amber)">${oncePoss?Math.round(onceAcks/oncePoss*100):0}%</div><div class="sl">Нэг удааны хамрагдалт</div></div>
+</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
   <div class="card">
-    <div class="ct">Тайлангийн мэдээлэл</div>
-    <div style="font-size:12px;color:var(--text2);line-height:2">
-      Нийт заавар: <strong style="color:var(--text)">${INSTRS.length}</strong><br>
+    <div class="ct">Тайлангийн хураангуй</div>
+    <div style="font-size:12px;color:var(--text2);line-height:2.2">
+      Нийт заавар: <strong style="color:var(--text)">${INSTRS.length}</strong> (нэг удааны: ${onceInstrs.length}, өдөр бүр: ${evInstrs.length})<br>
       Нийт ажилтан: <strong style="color:var(--text)">${ws.length}</strong><br>
-      Нийт хүлээн авалт: <strong style="color:var(--green)">${ACKS.length}</strong> / ${poss}<br>
-      Нийт хамрагдалт: <strong style="color:var(--amber)">${poss?Math.round(ACKS.length/poss*100):0}%</strong><br>
+      Нэг удааны хүлээн авалт: <strong style="color:var(--green)">${onceAcks}</strong> / ${oncePoss} — <strong style="color:var(--amber)">${oncePoss?Math.round(onceAcks/oncePoss*100):0}%</strong><br>
+      Өдөр бүрийн нийт авалт: <strong style="color:var(--ev)">${evAcks}</strong> бичлэг<br>
       HABEA хамрагдалт: <strong style="color:var(--hb)">${hposs?Math.round(haAcks/hposs*100):0}%</strong>
     </div>
   </div>
-  <div class="card" style="display:flex;flex-direction:column;gap:10px">
+  <div class="card" style="display:flex;flex-direction:column;gap:12px">
     <div class="ct">Excel файл татаж авах</div>
-    <button class="expbtn" onclick="exportExcel()">📥 Excel татаж авах (.xlsx)</button>
-    <div style="font-size:10px;color:var(--text3);line-height:1.9">
-      📋 Хуудас 1: Дэлгэрэнгүй жагсаалт<br>🔷 Хуудас 2: HABEA тайлан<br>📊 Хуудас 3: Ажилтан хураангуй
+    <button class="expbtn" style="font-size:13px;padding:10px 16px" onclick="exportExcel()">📥 Excel татаж авах (.xlsx)</button>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:12px;font-size:11px;color:var(--text3);line-height:2">
+      📋 <strong style="color:var(--text2)">Хуудас 1:</strong> Дэлгэрэнгүй жагсаалт (өдөр бүрийн бүх ack тус бүр мөр)<br>
+      🔷 <strong style="color:var(--text2)">Хуудас 2:</strong> HABEA тайлан<br>
+      📊 <strong style="color:var(--text2)">Хуудас 3:</strong> Ажилтан хураангуй + гарын үсэг тоо
     </div>
   </div>
+</div>
+
+${evInstrs.length>0?`
+<div class="card" style="margin-bottom:14px">
+  <div class="ct">🔄 Өдөр бүрийн зааврын түүх — сүүлийн ${evDates.length} өдөр</div>
+  ${evDates.length===0?'<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">Хүлээн авалт байхгүй</div>':
+  evDates.map(date=>{
+    const dayAcks=ACKS.filter(a=>a.ack_date===date&&evInstrs.find(i=>i.id===a.instruction_id));
+    const poss2=evInstrs.length*ws.length;
+    const pct2=poss2?Math.round(dayAcks.length/poss2*100):0;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2);min-width:90px;flex-shrink:0">${date}</span>
+      <div style="flex:1;min-width:0">
+        <div class="prog"><div class="pf" style="width:${pct2}%;background:${pct2===100?'var(--green)':'var(--ev)'}"></div></div>
+      </div>
+      <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text2);flex-shrink:0">${dayAcks.length}/${poss2} — ${pct2}%</span>
+      <span class="badge ${pct2===100?'bgg':pct2>0?'bgev':'bgr'}" style="flex-shrink:0">${pct2===100?'Бүрэн':pct2>0?'Хэсэгчлэн':'Аваагүй'}</span>
+    </div>`;
+  }).join('')}
+</div>`:''}
+
+<div class="card">
+  <div class="ct">Ажилтан тус бүрийн хураангуй</div>
+  <div class="tw"><table>
+    <thead><tr>
+      <th>Ажилтан</th>
+      <th style="width:80px">Нэг удааны</th>
+      <th style="width:80px">HABEA</th>
+      <th style="width:70px">Өдөр бүр</th>
+      <th style="width:120px">Хувь</th>
+      <th style="width:80px">Байдал</th>
+    </tr></thead>
+    <tbody>${ws.map(w=>{
+      const onceTk=onceInstrs.reduce((s,i)=>s+(ACKS.some(a=>a.instruction_id===i.id&&a.user_id===Number(w.id))?1:0),0);
+      const hTk=hi.reduce((s,i)=>s+(ACKS.some(a=>a.instruction_id===i.id&&a.user_id===Number(w.id))?1:0),0);
+      const evTk=ACKS.filter(a=>a.user_id===Number(w.id)&&evInstrs.find(i=>i.id===a.instruction_id)).length;
+      const p2=oncePoss?Math.round(onceTk/onceInstrs.length*100):0; // once % only
+      return `<tr>
+        <td class="tdm">${w.name}${w.on_leave?' <span class="badge bga" style="font-size:9px">😴</span>':''}</td>
+        <td><span class="badge bgb">${onceTk}/${onceInstrs.length}</span></td>
+        <td><span class="badge bgh">${hTk}/${hi.length}</span></td>
+        <td><span class="badge bgev">${evTk}</span></td>
+        <td><div style="display:flex;align-items:center;gap:6px">
+          <div style="width:48px;background:var(--bg5);height:4px;border-radius:2px;overflow:hidden"><div style="width:${p2}%;height:100%;background:${p2===100?'var(--green)':'var(--accent)'}"></div></div>
+          <span style="font-size:11px;font-family:'IBM Plex Mono',monospace">${p2}%</span>
+        </div></td>
+        <td><span class="badge ${p2===100?'bgg':p2>0?'bga':'bgr'}">${p2===100?'Бүрэн':p2>0?'Хэсэгчлэн':'Аваагүй'}</span></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>
 </div>`;
 }
 
@@ -882,10 +1179,10 @@ function rWorkers(){
     </div>
     <div class="srow"><input class="si" placeholder="Нэр, нэвтрэх нэрээр хайх..." value="${wSrch}" oninput="wSrch=this.value.toLowerCase();wPage=1;navigate('workers')"><span style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${fil.length}</span></div>
     <div class="tw" style="max-height:500px"><table>
-      <thead><tr><th style="width:36px">#</th><th>Нэр</th><th style="width:110px">Нэвтрэх нэр</th><th style="width:140px">Мэргэжил</th><th style="width:100px">Утас</th><th style="width:80px">Авсан/Нийт</th><th style="width:70px">HABEA</th></tr></thead>
+      <thead><tr><th style="width:28px">#</th><th>Нэр</th><th style="width:100px">Нэвтрэх нэр</th><th style="width:120px">Мэргэжил</th><th style="width:90px">Утас</th><th style="width:70px">Авсан</th><th style="width:60px">HABEA</th><th style="width:90px">Амралт</th></tr></thead>
       <tbody>${sl.map((w,idx)=>{
-        const tk=INSTRS.filter(i=>getAck(i,w.id)).length;
-        const hbtk=INSTRS.filter(i=>i.type==='habea'&&getAck(i,w.id)).length;
+        const tk=INSTRS.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
+        const hbtk=INSTRS.filter(i=>i.type==='habea').reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);
         const hbtot=INSTRS.filter(i=>i.type==='habea').length;
         return `<tr>
           <td style="color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:10px">${(pg-1)*WPP+idx+1}</td>
@@ -895,6 +1192,7 @@ function rWorkers(){
           <td style="font-size:11px;color:var(--text2);font-family:'IBM Plex Mono',monospace">${w.phone||'<span style="color:var(--text3)">—</span>'}</td>
           <td><span class="badge bgb">${tk}/${INSTRS.length}</span></td>
           <td><span class="badge bgh">${hbtk}/${hbtot}</span></td>
+          <td><button onclick="toggleLeave(${w.id})" style="padding:3px 9px;border-radius:20px;border:1px solid ${w.on_leave?'var(--abd)':'var(--border2)'};background:${w.on_leave?'var(--abg)':'transparent'};color:${w.on_leave?'var(--amber)':'var(--text3)'};font-size:10px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:all .15s;white-space:nowrap">${w.on_leave?'😴 Амралт':'✓'}</button></td>
         </tr>`;}).join('')}</tbody>
     </table></div>
     ${pagCtrl(pg,tp,'wPage','workers',fil.length)}
@@ -959,7 +1257,7 @@ async function addUser(){
   const role=document.getElementById('nuRl').value;
   const err=document.getElementById('nuErr');
   if(!name||!username||!password){err.textContent='Нэр, нэвтрэх нэр, нууц үг шаардлагатай!';return;}
-  const {error}=await sb.from('users').insert({name,username,password,role,profession,phone});
+  const{error}=await sb.from('users').insert({name,username,password,role,profession,phone,on_leave:false});
   if(error){err.textContent=error.code==='23505'?'Нэвтрэх нэр аль хэдийн бүртгэлтэй!':'Алдаа: '+error.message;return;}
   err.textContent='';showToast(name+' нэмэгдлээ!','g');navigate('mu');
 }
@@ -979,6 +1277,7 @@ function openEU(id){
   document.getElementById('euProf').value=u.profession||'';
   document.getElementById('euPhone').value=u.phone||'';
   document.getElementById('euRl').value=u.role;
+  const _lv=document.getElementById('euLeave');if(_lv)_lv.checked=!!u.on_leave;
   document.getElementById('euErr').textContent='';
   document.getElementById('euModal').classList.add('open');
 }
@@ -993,37 +1292,72 @@ async function saveEU(){
   const role=document.getElementById('euRl').value;
   const err=document.getElementById('euErr');
   if(!name||!username){err.textContent='Нэр болон нэвтрэх нэр шаардлагатай!';return;}
-  const upd={name,username,role,profession,phone};
+  const on_leave=!!(document.getElementById('euLeave')?.checked);
+  const upd={name,username,role,profession,phone,on_leave};
   if(password) upd.password=password;
-  const {error}=await sb.from('users').update(upd).eq('id',id);
+  const{error}=await sb.from('users').update(upd).eq('id',id);
   if(error){err.textContent='Алдаа: '+error.message;return;}
   if(CU.id===id){CU.name=name;CU.username=username;CU.role=role;}
   closeEU();showToast('Хадгалагдлаа!','g');navigate('mu');
 }
 
 // ============================================================
-// WORKER — TODAY
+// WORKER — TODAY (БҮХ ТӨРЛИЙН ЗААВАР)
 // ============================================================
 function rToday(){
   const uid=CU.id;
-  const gen=INSTRS.filter(i=>i.type!=='habea'&&activeToday(i)&&targMatch(i,uid));
-  const unread=INSTRS.filter(i=>i.type!=='habea'&&!getAck(i,uid)&&targMatch(i,uid)&&!activeToday(i)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'))[0];
+
+  // Өнөөдрийн БҮГД заавар (habea, urgent, general) — targMatch хангасан
+  const todayInstrs=INSTRS.filter(i=>activeToday(i)&&targMatch(i,uid));
+
+  // Аваагүй өмнөх заавар (reminder)
+  const unread=INSTRS.filter(i=>!i.everyday&&!getAck(i,uid)&&targMatch(i,uid)&&!activeToday(i))
+    .sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'))[0];
+
   let html='';
+
   if(unread){
-    html+=`<div style="background:var(--abg);border:1px solid var(--abd);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
-      <span style="font-size:18px;flex-shrink:0">⚠️</span>
+    html+=`<div class="w-alert">
+      <div class="w-alert-ico">⚠️</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:1px">Аваагүй заавар байна — ${unread.date||'Байнга'}</div>
-        <div style="font-size:11px;color:var(--text2)">${unread.text.length>80?unread.text.slice(0,80)+'…':unread.text}</div>
+        <div class="w-alert-title">Аваагүй заавар байна — ${unread.date||'Байнга'}</div>
+        <div class="w-alert-sub">${unread.text.length>90?unread.text.slice(0,90)+'…':unread.text}</div>
       </div>
-      <button class="btn btnsm" onclick="navigate('history')">Харах →</button>
+      <button onclick="navigate('history')"
+        style="flex-shrink:0;padding:8px 14px;border-radius:8px;border:1px solid var(--abd);background:transparent;color:var(--amber);font-size:12px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;white-space:nowrap">
+        Харах →
+      </button>
     </div>`;
   }
-  if(!gen.length){
-    html+=`<div style="text-align:center;padding:60px 20px;color:var(--text3)"><div style="font-size:28px;margin-bottom:10px;opacity:.5">☀️</div><div style="font-size:13px">Өнөөдрийн ерөнхий заавар байхгүй</div><div style="font-size:11px;margin-top:4px">${today()}</div></div>`;
+
+  if(!todayInstrs.length){
+    html+=`<div style="text-align:center;padding:60px 20px;color:var(--text3)">
+      <div style="font-size:32px;margin-bottom:10px;opacity:.4">☀️</div>
+      <div style="font-size:13px">Өнөөдрийн заавар байхгүй</div>
+      <div style="font-size:11px;margin-top:4px;font-family:'IBM Plex Mono',monospace">${today()}</div>
+    </div>`;
     return html;
   }
-  html+=gen.map(i=>wCard(i,uid)).join('');
+
+  // Яаралтай зааврыг эхэнд гаргах
+  const urgent=todayInstrs.filter(i=>i.type==='urgent');
+  const habea=todayInstrs.filter(i=>i.type==='habea');
+  const general=todayInstrs.filter(i=>i.type==='general');
+  const ordered=[...urgent,...habea,...general];
+
+  if(urgent.length){
+    html+=`<div class="wsec-hdr"><span class="wsec-lbl" style="color:var(--red)">🚨 Яаралтай</span><div class="wsec-line"></div></div>`;
+    html+=urgent.map(i=>wCard(i,uid)).join('');
+  }
+  if(habea.length){
+    html+=(urgent.length?'<div style="margin-top:8px"></div>':'')+`<div class="wsec-hdr"><span class="wsec-lbl" style="color:var(--hb)">🔷 HABEA</span><div class="wsec-line"></div></div>`;
+    html+=habea.map(i=>wCard(i,uid)).join('');
+  }
+  if(general.length){
+    html+=((urgent.length||habea.length)?'<div style="margin-top:8px"></div>':'')+`<div class="wsec-hdr"><span class="wsec-lbl" style="color:var(--text3)">Ерөнхий</span><div class="wsec-line"></div></div>`;
+    html+=general.map(i=>wCard(i,uid)).join('');
+  }
+
   return html;
 }
 
@@ -1034,7 +1368,7 @@ function rHabeaW(){
   const uid=CU.id;
   const hi=INSTRS.filter(i=>i.type==='habea'&&targMatch(i,uid)).sort((a,b)=>{
     if(a.everyday&&!b.everyday)return -1;if(b.everyday&&!a.everyday)return 1;
-    return (b.date||'9999').localeCompare(a.date||'9999');
+    return(b.date||'9999').localeCompare(a.date||'9999');
   });
   const todH=hi.filter(i=>activeToday(i));
   const total=hi.length,taken=hi.reduce((s,i)=>s+(getAck(i,uid)?1:0),0);
@@ -1067,20 +1401,33 @@ function rHabeaW(){
 
 function wCard(i,uid){
   const acked=!!getAck(i,uid),ack=getAck(i,uid);
-  return `<div class="ic ${i.type==='habea'?'ichb':''}">
-    <div class="icmeta">
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Өдөр бүр':i.date}</span>
+  const dotCls=acked?'wic-dot wic-dot-done':i.type==='habea'?'wic-dot wic-dot-h':i.type==='urgent'?'wic-dot wic-dot-u':'wic-dot wic-dot-g';
+  const cardCls='wic'+(acked?' wic-done':i.type==='habea'?' wic-habea':i.type==='urgent'?' wic-urgent':'');
+  const ackTime=acked&&ack.signed_at?new Date(ack.signed_at).toLocaleString('mn-MN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+  return `<div class="${cardCls}">
+    <div class="wic-meta">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3)">${i.everyday?'🔄 Өдөр бүр':i.date}</span>
       ${tBadge(i.type,i.everyday)}
-      ${acked?'<span class="badge bgg">✔ Хүлээн авсан</span>':'<span class="badge bga">Хүлээлтэй</span>'}
-    </div>
-    <div class="icbody">${i.text}</div>
-    <div class="icfoot">
       ${acked
-        ?`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <div style="padding:6px 12px;background:var(--gbg);border:1px solid var(--gbd);border-radius:var(--rs);color:var(--green);font-size:11px">✔ Хүлээн авлаа</div>
-            ${ack.sig?`<img class="sth" src="${ack.sig}" onclick="viewSig('${ack.sig}','${CU.name}')" title="Гарын үсэг" style="height:30px;width:auto">`:'<span style="font-size:10px;color:var(--text3);font-style:italic">гарын үсэггүй</span>'}
+        ?'<span class="badge bgg" style="font-size:11px;padding:3px 9px">✔ Хүлээн авсан</span>'
+        :'<span class="badge bga" style="font-size:11px;padding:3px 9px">Хүлээлтэй</span>'}
+    </div>
+    <div class="wic-body">${i.text}</div>
+    <div class="wic-foot">
+      ${acked
+        ?`<div class="wic-done-row">
+            <div>
+              <div class="wic-done-txt">✔ Хүлээн авлаа</div>
+              ${ackTime?`<div class="wic-done-time">${ackTime}</div>`:''}
+            </div>
+            ${ack.sig?`<img src="${ack.sig}" onclick="viewSig('${ack.sig}','${CU.name}')"
+              style="height:34px;width:auto;border:1px solid var(--gbd);border-radius:4px;background:var(--bg3);cursor:pointer;flex-shrink:0">`
+              :'<span style="font-size:11px;color:var(--text3);font-style:italic">гарын үсэггүй</span>'}
           </div>`
-        :`<button style="padding:8px 18px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);cursor:pointer;font-size:12px;transition:all .15s;font-family:'IBM Plex Sans',sans-serif" onmouseover="this.style.background='var(--gbg)';this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.background='var(--bg3)';this.style.borderColor='var(--border2)';this.style.color='var(--text)'" onclick="openSigM(${i.id})">✍️ Гарын үсэг зурж хүлээн авах</button>`}
+        :`<button class="wcard-ack-btn" onclick="openSigM(${i.id})">
+            <span style="font-size:18px">✍️</span>
+            <span>Гарын үсэг зурж хүлээн авах</span>
+          </button>`}
     </div>
   </div>`;
 }
@@ -1090,32 +1437,41 @@ function wCard(i,uid){
 // ============================================================
 function rHistory(){
   const uid=CU.id;
-  const sorted=INSTRS.filter(i=>i.type!=='habea'&&targMatch(i,uid)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
-  const total=sorted.length,taken=sorted.reduce((s,i)=>s+(getAck(i,uid)?1:0),0);
+  const once=INSTRS.filter(i=>!i.everyday&&targMatch(i,uid)).sort((a,b)=>(b.date||'9999').localeCompare(a.date||'9999'));
+  const everyday=INSTRS.filter(i=>i.everyday&&targMatch(i,uid));
+  const evRows=[];
+  everyday.forEach(i=>{getAckHistory(i,uid).forEach(a=>{evRows.push({i,ack:a,date:a.ack_date});});});
+  evRows.sort((a,b)=>b.date.localeCompare(a.date));
+  const total=once.length,taken=once.reduce((s,i)=>s+(getAck(i,uid)?1:0),0),missed=total-taken;
   return `
-<div class="sg sg3" style="margin-bottom:14px">
-  <div class="st"><div class="sv" style="color:var(--accent)">${total}</div><div class="sl">Нийт заавар</div></div>
-  <div class="st"><div class="sv" style="color:var(--green)">${taken}</div><div class="sl">Хүлээн авсан</div></div>
-  <div class="st"><div class="sv" style="color:${total-taken>0?'var(--red)':'var(--text3)'}">${total-taken}</div><div class="sl">Аваагүй</div></div>
+<div class="sg sg3" style="margin-bottom:16px">
+  <div class="wstat"><div class="wstat-v" style="color:var(--accent)">${total}</div><div class="wstat-l">Нэг удааны заавар</div></div>
+  <div class="wstat"><div class="wstat-v" style="color:var(--green)">${taken}</div><div class="wstat-l">Хүлээн авсан</div></div>
+  <div class="wstat"><div class="wstat-v" style="color:${missed>0?'var(--red)':'var(--text3)'}">${missed}</div><div class="wstat-l">Аваагүй</div></div>
 </div>
+${evRows.length?`
+<div class="card" style="margin-bottom:14px">
+  <div class="wsec-hdr" style="margin-bottom:0">
+    <span class="wsec-lbl" style="color:var(--ev)">\u{1F504} \u04E8\u0434\u04E9\u0440 \u0431\u04AF\u0440\u0438\u0439\u043D \u0442\u04AF\u04AF\u0445</span>
+    <div class="wsec-line"></div>
+    <span style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;flex-shrink:0">${evRows.length} \u0431\u0438\u0447\u043B\u044D\u0433</span>
+  </div>
+  ${evRows.map(({i,ack,date})=>{
+    const t=ack.signed_at?new Date(ack.signed_at).toLocaleString('mn-MN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):date;
+    return '<div class="whist-item"><div class="whist-icon whist-icon-done">\u2714</div><div class="whist-content"><div class="whist-date" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span>'+date+'</span>'+tBadge(i.type,true)+'</div><div class="whist-text">'+(i.text.length>90?i.text.slice(0,90)+'\u2026':i.text)+'</div><div class="whist-status" style="color:var(--green)">\u2714 '+t+'</div></div></div>';
+  }).join('')}
+</div>`:'' }
 <div class="card">
-  <div class="ct">Бүх ерөнхий зааврын жагсаалт</div>
-  ${sorted.map(i=>{const ack=getAck(i,uid);return `
-    <div style="display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid var(--border)">
-      <div style="width:18px;height:18px;border-radius:50%;background:${ack?'var(--gbg)':'var(--rbg)'};display:flex;align-items:center;justify-content:center;font-size:9px;color:${ack?'var(--green)':'var(--red)'};flex-shrink:0;margin-top:2px">${ack?'✔':'✘'}</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${i.everyday?'🔄 Байнга':i.date}</span>
-          ${tBadge(i.type,i.everyday)}
-        </div>
-        <div style="font-size:12px;color:var(--text);line-height:1.6">${i.text}</div>
-        ${ack?`<div style="font-size:10px;color:var(--green);margin-top:6px">✔ Авсан</div>`:'<div style="font-size:10px;color:var(--red);margin-top:4px">Аваагүй</div>'}
-      </div>
-      <span class="badge ${ack?'bgg':'bgr'}" style="flex-shrink:0">${ack?'Авсан':'Аваагүй'}</span>
-    </div>`;}).join('')}
+  <div class="wsec-hdr" style="margin-bottom:4px">
+    <span class="wsec-lbl" style="color:var(--text3)">\u041D\u044D\u0433 \u0443\u0434\u0430\u0430\u043D\u044B \u0437\u0430\u0430\u0432\u0430\u0440</span>
+    <div class="wsec-line"></div>
+  </div>
+  ${once.length===0
+    ?'<div style="text-align:center;padding:28px;color:var(--text3);font-size:13px">\u041D\u044D\u0433 \u0443\u0434\u0430\u0430\u043D\u044B \u0437\u0430\u0430\u0432\u0430\u0440 \u0431\u0430\u0439\u0445\u0433\u04AF\u0439</div>'
+    :once.map(i=>{const ack=getAck(i,uid); const ackT=ack&&ack.signed_at?new Date(ack.signed_at).toLocaleString('mn-MN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):(ack?ack.ack_date:'');
+    return '<div class="whist-item"><div class="whist-icon '+(ack?'whist-icon-done':'whist-icon-miss')+'">'+(ack?'\u2714':'\u2718')+'</div><div class="whist-content"><div class="whist-date" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span>'+(i.date||'\u2014')+'</span>'+tBadge(i.type,false)+'</div><div class="whist-text">'+i.text+'</div><div class="whist-status" style="color:'+(ack?'var(--green)':'var(--red)')+'">'+( ack?('\u2714 '+ackT):'\u2718 \u0410\u0432\u0430\u0430\u0433\u04AF\u0439')+'</div></div><span class="badge '+(ack?'bgg':'bgr')+'" style="flex-shrink:0;font-size:11px">'+(ack?'\u0410\u0432\u0441\u0430\u043D':'\u0410\u0432\u0430\u0430\u0433\u04AF\u0439')+'</span></div>';}).join('')}
 </div>`;
 }
-
 // ============================================================
 // SIGNATURE PAD
 // ============================================================
@@ -1125,14 +1481,14 @@ function openSigM(id){
   const i=INSTRS.find(x=>x.id===id);
   document.getElementById('sigSub').textContent=i?`"${i.text.slice(0,60)}${i.text.length>60?'…':''}"`:'' ;
   document.getElementById('sigModal').classList.add('open');
-  setTimeout(initSP,50);
+  setTimeout(initSP,80);
 }
 function initSP(){
   sigCanvas=document.getElementById('sigCanvas');
   const wrap=document.getElementById('sigWrap');
   sigCanvas.width=wrap.clientWidth;sigCanvas.height=140;
   sigCtx=sigCanvas.getContext('2d');
-  sigCtx.strokeStyle='#ededf0';sigCtx.lineWidth=2;sigCtx.lineCap='round';sigCtx.lineJoin='round';
+  sigCtx.strokeStyle='#ededf0';sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';
   hasSig=false;document.getElementById('sigPh').style.display='block';
   sigCanvas.onmousedown=e=>{isDrawing=true;[lastX,lastY]=gp(e);};
   sigCanvas.onmousemove=e=>{if(!isDrawing)return;dr(e);};
@@ -1143,14 +1499,14 @@ function initSP(){
   sigCanvas.ontouchend=()=>{isDrawing=false;sigCtx.beginPath();};
 }
 function gp(e){const r=sigCanvas.getBoundingClientRect();return[(e.clientX-r.left)*(sigCanvas.width/r.width),(e.clientY-r.top)*(sigCanvas.height/r.height)];}
-function dr(e){const [x,y]=gp(e);sigCtx.beginPath();sigCtx.moveTo(lastX,lastY);sigCtx.lineTo(x,y);sigCtx.stroke();[lastX,lastY]=[x,y];if(!hasSig){hasSig=true;document.getElementById('sigPh').style.display='none';}}
+function dr(e){const[x,y]=gp(e);sigCtx.beginPath();sigCtx.moveTo(lastX,lastY);sigCtx.lineTo(x,y);sigCtx.stroke();[lastX,lastY]=[x,y];if(!hasSig){hasSig=true;document.getElementById('sigPh').style.display='none';}}
 function clearSig(){if(!sigCtx)return;sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);hasSig=false;document.getElementById('sigPh').style.display='block';}
 function closeSig(){document.getElementById('sigModal').classList.remove('open');pendingSigId=null;}
 async function confirmSig(){
   if(!hasSig){showToast('Гарын үсэг зурна уу!');return;}
   const sig=sigCanvas.toDataURL('image/png');
   const i=INSTRS.find(x=>x.id===pendingSigId);if(!i){closeSig();return;}
-  const {error}=await sb.from('acknowledgements').upsert({
+  const{error}=await sb.from('acknowledgements').upsert({
     instruction_id:i.id,
     user_id:CU.id,
     ack_date:today(),
@@ -1168,29 +1524,326 @@ document.addEventListener('click',e=>{
 });
 
 // ============================================================
-// EXCEL
+// EXCEL — Компанийн түвшний export
 // ============================================================
-function exportExcel(){
-  const ws_=workers();
-  const hi=INSTRS.filter(i=>i.type==='habea');
-  const det=[['Огноо','Төрөл','Өдөр бүр?','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг'],...INSTRS.flatMap(i=>ws_.map(w=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,tLabel(i.type),i.everyday?'Тийм':'Үгүй',i.text,w.name,ack?'Авсан':'Аваагүй',ack?new Date(ack.signed_at).toLocaleString('mn-MN'):'—'];}))];
-  const hdet=[['Огноо','Агуулга','Ажилтан','Авсан эсэх','Огноо цаг'],...hi.flatMap(i=>ws_.map(w=>{const ack=getAck(i,w.id);return[i.everyday?'Өдөр бүр':i.date,i.text,w.name,ack?'Авсан':'Аваагүй',ack?new Date(ack.signed_at).toLocaleString('mn-MN'):'—'];}))];
-  const wsum=[['Ажилтан','Нэвтрэх нэр','Мэргэжил','Утас','Нийт заавар','Авсан','Аваагүй','Хувь (%)','HABEA авсан','HABEA нийт'],...ws_.map(w=>{const tk=INSTRS.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);const htk=hi.reduce((s,i)=>s+(getAck(i,w.id)?1:0),0);return[w.name,w.username,w.profession||'',w.phone||'',INSTRS.length,tk,INSTRS.length-tk,INSTRS.length?Math.round(tk/INSTRS.length*100):0,htk,hi.length];})];
-  const wb=XLSX.utils.book_new();
-  [[det,'Дэлгэрэнгүй жагсаалт',7],[hdet,'HABEA тайлан',5],[wsum,'Ажилтан хураангуй',10]].forEach(([data,name,cols])=>{
-    const sh=XLSX.utils.aoa_to_sheet(data);stX(sh,data.length,cols);
-    sh['!cols']=Array(cols).fill({wch:14});if(sh['!cols'][3])sh['!cols'][3]={wch:40};
-    XLSX.utils.book_append_sheet(wb,sh,name);
-  });
-  XLSX.writeFile(wb,`bsoft_workflow_${today()}.xlsx`);
-  showToast('Excel файл татагдлаа!','g');
+
+// ── Өнгөний palette (hex, no #) ──────────────────────────────
+const XC = {
+  // Header backgrounds
+  H_NAVY:   '1E3A5F',   // Ерөнхий header — харанхуй цэнхэр
+  H_PURPLE: '4C1D95',   // HABEA header — нил ягаан
+  H_TEAL:   '134E4A',   // Ажилтан header — харанхуй ногоон
+  H_COVER:  '0F172A',   // Нүүр хуудас header
+  // Header text
+  WHITE:    'FFFFFF',
+  // Row colors
+  ROW_EVEN: 'EFF6FF',   // Тэгш мөр — цайвар цэнхэр
+  ROW_ODD:  'FFFFFF',   // Тэгш бус мөр — цагаан
+  ROW_EV2:  'F5F3FF',   // HABEA тэгш — цайвар нил ягаан
+  ROW_OD2:  'FAFAFA',
+  ROW_EV3:  'ECFDF5',   // Ажилтан тэгш — цайвар ногоон
+  // Status colors
+  DONE_BG:  'DCFCE7',   DONE_FG:  '14532D',   // Авсан
+  MISS_BG:  'FEE2E2',   MISS_FG:  '7F1D1D',   // Аваагүй
+  PART_BG:  'FEF9C3',   PART_FG:  '713F12',   // Хэсэгчлэн
+  FULL_BG:  'BBF7D0',   FULL_FG:  '14532D',   // 100%
+  // Borders
+  BORDER:   'CBD5E1',
+  COVER_BG: '0F172A',
+};
+
+// ── Helpers ──────────────────────────────────────────────────
+function xDate(str){
+  if(!str) return null;
+  const d=new Date(str+'T00:00:00');
+  return isNaN(d)?null:d;
 }
-function stX(ws,rows,cols){
-  const L='ABCDEFGHIJ'.split('');
-  for(let c=0;c<cols;c++){const a=L[c]+'1';if(!ws[a])continue;ws[a].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A8A'}},alignment:{horizontal:'center'}};}
-  for(let r=2;r<=rows;r++)for(let c=0;c<cols;c++){const a=L[c]+r;if(!ws[a])continue;ws[a].s={fill:{fgColor:{rgb:r%2===0?'EFF6FF':'FFFFFF'}},alignment:{wrapText:true}};}
+function xDT(signed_at,ack_date){
+  if(signed_at){const d=new Date(signed_at);if(!isNaN(d))return d;}
+  return xDate(ack_date);
+}
+function xW(data){
+  if(!data||!data[0]) return [];
+  return data[0].map((_,ci)=>{
+    const maxW=data.reduce((m,row)=>{
+      const v=row[ci] instanceof Date?16:(row[ci]!=null?String(row[ci]).length:0);
+      return Math.max(m,v);
+    },10);
+    return {wch:Math.min(maxW+3,55)};
+  });
 }
 
+// cell style shorthand
+function cs(bgRgb,fgRgb,opts={}){
+  return {
+    fill:{patternType:'solid',fgColor:{rgb:bgRgb}},
+    font:{color:{rgb:fgRgb},bold:!!opts.bold,sz:opts.sz||11,name:'Calibri'},
+    alignment:{horizontal:opts.h||'left',vertical:'center',wrapText:!!opts.wrap},
+    border:{
+      top:{style:'thin',color:{rgb:XC.BORDER}},
+      bottom:{style:'thin',color:{rgb:XC.BORDER}},
+      left:{style:'thin',color:{rgb:XC.BORDER}},
+      right:{style:'thin',color:{rgb:XC.BORDER}},
+    }
+  };
+}
+
+// Apply styles to a sheet
+function applyStyles(sh, data, headerBg, evenBg, oddBg, dateColIdx, dtColIdx){
+  const enc=XLSX.utils.encode_cell;
+  const range=XLSX.utils.decode_range(sh['!ref']||'A1');
+  const cols=range.e.c+1;
+
+  for(let R=0;R<=range.e.r;R++){
+    for(let C=0;C<=range.e.c;C++){
+      const addr=enc({r:R,c:C});
+      if(!sh[addr]) sh[addr]={v:'',t:'s'};
+      const val=sh[addr].v;
+
+      if(R===0){
+        // Header мөр
+        sh[addr].s=cs(headerBg,XC.WHITE,{bold:true,sz:11,h:'center'});
+      } else {
+        const bg=R%2===0?evenBg:oddBg;
+
+        // Авсан/Аваагүй баганд conditional color
+        if(val==='Авсан'){
+          sh[addr].s=cs(XC.DONE_BG,XC.DONE_FG,{h:'center',bold:true});
+        } else if(val==='Аваагүй'){
+          sh[addr].s=cs(XC.MISS_BG,XC.MISS_FG,{h:'center',bold:true});
+        } else if(val==='Тийм'){
+          sh[addr].s=cs('DBEAFE','1E3A8A',{h:'center',bold:true});
+        } else if(val==='Үгүй'){
+          sh[addr].s=cs(oddBg,'64748B',{h:'center'});
+        } else if(C===dateColIdx&&sh[addr].t==='d'){
+          sh[addr].s=cs(bg,'334155',{h:'center'});
+          sh[addr].z='yyyy/mm/dd';
+        } else if(C===dtColIdx&&sh[addr].t==='d'){
+          sh[addr].s=cs(bg,'334155',{h:'center'});
+          sh[addr].z='yyyy/mm/dd hh:mm';
+        } else if(typeof val==='number'){
+          sh[addr].s=cs(bg,'1E3A5F',{h:'center',bold:C>3});
+        } else {
+          sh[addr].s=cs(bg,'334155',{wrap:C===3});
+        }
+      }
+    }
+  }
+  // Толгой мөрийн өндөр
+  if(!sh['!rows']) sh['!rows']=[];
+  sh['!rows'][0]={hpx:24};
+  // Freeze header row
+  sh['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activeCell:'A2',sqref:'A2'};
+}
+
+// Хувь → conditional color (Ажилтан хуудас)
+function applyPctColor(sh, pctCol, rowCount){
+  const enc=XLSX.utils.encode_cell;
+  for(let R=1;R<=rowCount;R++){
+    const addr=enc({r:R,c:pctCol});
+    if(!sh[addr]) continue;
+    const v=sh[addr].v;
+    if(typeof v!=='number') continue;
+    const bg=v===100?XC.FULL_BG:v>=70?XC.DONE_BG:v>=40?XC.PART_BG:XC.MISS_BG;
+    const fg=v===100?XC.FULL_FG:v>=70?XC.DONE_FG:v>=40?XC.PART_FG:XC.MISS_FG;
+    sh[addr].s=cs(bg,fg,{h:'center',bold:true});
+    sh[addr].v=v+'%';sh[addr].t='s';
+  }
+}
+
+// ── Cover sheet ───────────────────────────────────────────────
+function makeCoverSheet(ws_, hi){
+  const now=new Date();
+  const nowStr=now.toLocaleString('mn-MN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+  const onceI=INSTRS.filter(i=>!i.everyday);
+  const evI=INSTRS.filter(i=>i.everyday);
+  const totalAcks=ACKS.length;
+  const oncePoss=onceI.length*ws_.length;
+  const haAcks=hi.reduce((s,i)=>s+ws_.reduce((s2,w)=>s2+(getAck(i,w.id)?1:0),0),0);
+  const hposs=hi.length*ws_.length;
+  const pct=oncePoss?Math.round(ACKS.filter(a=>onceI.find(i=>i.id===a.instruction_id)).length/oncePoss*100):0;
+  const hpct=hposs?Math.round(haAcks/hposs*100):0;
+
+  const data=[
+    ['B SOFT LLC — Workflow Тайлан',''],
+    ['Гаргасан огноо:', nowStr],
+    ['',''],
+    ['ҮЗҮҮЛЭЛТ','УТГА'],
+    ['Нийт ажилтан',ws_.length],
+    ['Нийт заавар',INSTRS.length],
+    ['  — Нэг удааны заавар',onceI.length],
+    ['  — Өдөр бүрийн заавар',evI.length],
+    ['  — HABEA заавар',hi.length],
+    ['Нийт хүлээн авалт (нэг удааны)',ACKS.filter(a=>onceI.find(i=>i.id===a.instruction_id)).length+' / '+oncePoss],
+    ['Нэг удааны хамрагдалт',pct+'%'],
+    ['HABEA хамрагдалт',hpct+'%'],
+    ['Өдөр бүрийн нийт авалт',ACKS.filter(a=>evI.find(i=>i.id===a.instruction_id)).length+' бичлэг'],
+    ['Нийт гарын үсэг',ACKS.filter(a=>a.sig).length],
+  ];
+
+  const sh=XLSX.utils.aoa_to_sheet(data);
+  sh['!cols']=[{wch:36},{wch:28}];
+  if(!sh['!rows']) sh['!rows']=[];
+
+  const enc=XLSX.utils.encode_cell;
+  // Title
+  sh['A1'].s=cs(XC.H_COVER,XC.WHITE,{bold:true,sz:16,h:'left'});
+  sh['B1'].s=cs(XC.H_COVER,XC.WHITE,{sz:11});
+  sh['!rows'][0]={hpx:40};
+
+  // Subtitle row
+  sh['A2'].s=cs('1E293B','94A3B8',{sz:10});
+  sh['B2'].s=cs('1E293B','64DCFF',{sz:10,bold:true});
+  sh['!rows'][1]={hpx:20};
+
+  // Empty row
+  sh['A3']={v:'',t:'s',s:cs('0F172A',XC.WHITE)};
+  sh['B3']={v:'',t:'s',s:cs('0F172A',XC.WHITE)};
+
+  // Table header row (row 4 = index 3)
+  sh['A4'].s=cs(XC.H_NAVY,XC.WHITE,{bold:true,sz:11,h:'center'});
+  sh['B4'].s=cs(XC.H_NAVY,XC.WHITE,{bold:true,sz:11,h:'center'});
+  sh['!rows'][3]={hpx:22};
+
+  // Data rows
+  for(let r=4;r<data.length;r++){
+    const even=r%2===0;
+    const bg=even?'EFF6FF':'FFFFFF';
+    const isMetric=r>=4;
+    const addrA=enc({r,c:0}), addrB=enc({r,c:1});
+    if(!sh[addrA]) sh[addrA]={v:'',t:'s'};
+    if(!sh[addrB]) sh[addrB]={v:'',t:'s'};
+    sh[addrA].s=cs(bg,'334155',{bold:false});
+
+    // Value: color by content
+    const vb=sh[addrB].v;
+    if(typeof vb==='string'&&vb.includes('%')){
+      const n=parseInt(vb);
+      const vbg=n===100?XC.FULL_BG:n>=70?XC.DONE_BG:n>=40?XC.PART_BG:XC.MISS_BG;
+      const vfg=n===100?XC.FULL_FG:n>=70?XC.DONE_FG:n>=40?XC.PART_FG:XC.MISS_FG;
+      sh[addrB].s=cs(vbg,vfg,{bold:true,h:'center'});
+    } else if(typeof vb==='number'){
+      sh[addrB].s=cs(bg,'1E3A5F',{bold:true,h:'center'});
+    } else {
+      sh[addrB].s=cs(bg,'1E40AF',{bold:false,h:'center'});
+    }
+  }
+  return sh;
+}
+
+// ── Main export ───────────────────────────────────────────────
+function exportExcel(){
+  try{
+    const ws_=workers();
+    const hi=INSTRS.filter(i=>i.type==='habea');
+    const onceI=INSTRS.filter(i=>!i.everyday);
+    const evI=INSTRS.filter(i=>i.everyday);
+
+    // ── Sheet 1: Нүүр / Хураангуй ────────────────────────────
+    const coverSh=makeCoverSheet(ws_,hi);
+
+    // ── Sheet 2: Дэлгэрэнгүй жагсаалт ───────────────────────
+    const detRows=[['Заавар огноо','Төрөл','Өдөр бүр?','Зааврын агуулга','Ажилтан','Авсан эсэх','Авсан огноо цаг']];
+    INSTRS.forEach(i=>{
+      if(i.everyday){
+        ws_.forEach(w=>{
+          const history=getAckHistory(i,w.id);
+          if(!history.length){
+            detRows.push([null,tLabel(i.type),'Тийм',i.text,w.name,'Аваагүй',null]);
+          } else {
+            history.forEach(a=>{
+              detRows.push([xDate(a.ack_date),tLabel(i.type),'Тийм',i.text,w.name,'Авсан',xDT(a.signed_at,a.ack_date)]);
+            });
+          }
+        });
+      } else {
+        ws_.forEach(w=>{
+          const ack=ACKS.find(a=>a.instruction_id===i.id&&a.user_id===Number(w.id));
+          detRows.push([xDate(i.date),tLabel(i.type),'Үгүй',i.text,w.name,ack?'Авсан':'Аваагүй',ack?xDT(ack.signed_at,ack.ack_date):null]);
+        });
+      }
+    });
+    const detSh=XLSX.utils.aoa_to_sheet(detRows,{cellDates:true});
+    detSh['!cols']=xW(detRows);
+    detSh['!cols'][3]={wch:52}; // агуулга — өргөн
+    applyStyles(detSh,detRows,XC.H_NAVY,XC.ROW_EVEN,XC.ROW_ODD,0,6);
+
+    // ── Sheet 3: HABEA тайлан ─────────────────────────────────
+    const hdetRows=[['Огноо','HABEA зааврын агуулга','Ажилтан','Авсан эсэх','Авсан огноо цаг']];
+    hi.forEach(i=>{
+      if(i.everyday){
+        ws_.forEach(w=>{
+          const history=getAckHistory(i,w.id);
+          if(!history.length){
+            hdetRows.push([null,i.text,w.name,'Аваагүй',null]);
+          } else {
+            history.forEach(a=>{
+              hdetRows.push([xDate(a.ack_date),i.text,w.name,'Авсан',xDT(a.signed_at,a.ack_date)]);
+            });
+          }
+        });
+      } else {
+        ws_.forEach(w=>{
+          const ack=ACKS.find(a=>a.instruction_id===i.id&&a.user_id===Number(w.id));
+          hdetRows.push([xDate(i.date),i.text,w.name,ack?'Авсан':'Аваагүй',ack?xDT(ack.signed_at,ack.ack_date):null]);
+        });
+      }
+    });
+    const hdetSh=XLSX.utils.aoa_to_sheet(hdetRows,{cellDates:true});
+    hdetSh['!cols']=xW(hdetRows);
+    hdetSh['!cols'][1]={wch:52};
+    applyStyles(hdetSh,hdetRows,XC.H_PURPLE,XC.ROW_EV2,XC.ROW_OD2,0,4);
+
+    // ── Sheet 4: Ажилтан хураангуй ───────────────────────────
+    const wsumRows=[['Ажилтан','Нэвтрэх нэр','Мэргэжил','Утас','Нийт заавар','Авсан','Аваагүй','Хувь (%)','HABEA авсан','HABEA нийт','Гарын үсэг']];
+    ws_.forEach(w=>{
+      const tk=INSTRS.reduce((s,i)=>s+(ACKS.some(a=>a.instruction_id===i.id&&a.user_id===Number(w.id))?1:0),0);
+      const htk=hi.reduce((s,i)=>s+(ACKS.some(a=>a.instruction_id===i.id&&a.user_id===Number(w.id))?1:0),0);
+      const sigCnt=ACKS.filter(a=>a.user_id===Number(w.id)&&a.sig).length;
+      wsumRows.push([
+        w.name,w.username,w.profession||'',w.phone||'',
+        INSTRS.length,tk,INSTRS.length-tk,
+        INSTRS.length?Math.round(tk/INSTRS.length*100):0,
+        htk,hi.length,sigCnt
+      ]);
+    });
+    const wsumSh=XLSX.utils.aoa_to_sheet(wsumRows,{cellDates:true});
+    wsumSh['!cols']=xW(wsumRows);
+    applyStyles(wsumSh,wsumRows,XC.H_TEAL,XC.ROW_EV3,XC.ROW_ODD,-1,-1);
+    applyPctColor(wsumSh,7,wsumRows.length-1); // Хувь (%) багана
+
+    // ── Sheet 5: Өдрийн дүн (сүүлийн 30 өдөр) ───────────────
+    const evDates=[...new Set(ACKS.filter(a=>evI.find(i=>i.id===a.instruction_id)).map(a=>a.ack_date))]
+      .sort((a,b)=>b.localeCompare(a)).slice(0,30);
+    const dayRows=[['Огноо','Нийт боломжит','Авсан','Аваагүй','Хувь (%)']];
+    evDates.forEach(date=>{
+      const dayAcks=ACKS.filter(a=>a.ack_date===date&&evI.find(i=>i.id===a.instruction_id));
+      const poss=evI.length*ws_.length;
+      const missed=poss-dayAcks.length;
+      const pct=poss?Math.round(dayAcks.length/poss*100):0;
+      dayRows.push([xDate(date),poss,dayAcks.length,missed,pct]);
+    });
+    const daySh=XLSX.utils.aoa_to_sheet(dayRows,{cellDates:true});
+    daySh['!cols']=[{wch:16},{wch:18},{wch:12},{wch:12},{wch:12}];
+    applyStyles(daySh,dayRows,'0E7490','E0F2FE','FFFFFF',0,-1);
+    applyPctColor(daySh,4,dayRows.length-1);
+
+    // ── Workbook ─────────────────────────────────────────────
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,coverSh,'📊 Хураангуй');
+    XLSX.utils.book_append_sheet(wb,detSh,'📋 Дэлгэрэнгүй');
+    XLSX.utils.book_append_sheet(wb,hdetSh,'🔷 HABEA');
+    XLSX.utils.book_append_sheet(wb,wsumSh,'👥 Ажилтан');
+    XLSX.utils.book_append_sheet(wb,daySh,'📅 Өдрийн дүн');
+
+    const fname=`BSOFT_Тайлан_${today()}.xlsx`;
+    XLSX.writeFile(wb,fname,{cellDates:true,bookSST:false});
+    showToast('📥 '+fname+' татагдлаа','g');
+  } catch(e){
+    console.error('Excel export error:',e);
+    showToast('Excel алдаа: '+e.message);
+  }
+}
 // ============================================================
 // PAGINATION
 // ============================================================
@@ -1210,9 +1863,7 @@ function pagCtrl(cur,total,varName,page,tot){
   </div>`;
 }
 
-// ============================================================
 // TOAST & ICONS
-// ============================================================
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='g'?' tg':type==='h'?' th':'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
 function iGrid(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`;}
 function iHb(){return`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;}
