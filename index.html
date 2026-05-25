@@ -511,6 +511,8 @@ function today(){
 function nowTime(){return new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'});}
 function nowDT(){return new Date().toLocaleString('mn-MN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
 function workers(){return USERS.filter(u=>u.role==='worker');}
+// Идэвхтэй ажилтан — амралтаас хасах (заавар тооцоо, poss тооцоонд)
+function activeWorkers(){return USERS.filter(u=>u.role==='worker'&&!u.on_leave);}
 function tLabel(t){return{general:'Ерөнхий',habea:'HABEA',urgent:'Яаралтай'}[t]||'Ерөнхий';}
 function tBadge(t,ev){
   let b=t==='habea'?'<span class="badge bgh">🔷 HABEA</span>':t==='urgent'?'<span class="badge bgr">🚨 Яаралтай</span>':'<span class="badge bgb">Ерөнхий</span>';
@@ -666,7 +668,7 @@ async function navigate(page){
 // DASHBOARD
 // ============================================================
 function rDash(){
-  const ws=workers();
+  const ws=activeWorkers(); // амралтгүй ажилтнууд — тооцоонд
   const todayAll=INSTRS.filter(i=>activeToday(i));
   const totalAcks=ACKS.length;
   const poss=INSTRS.length*ws.length;
@@ -732,7 +734,7 @@ function rDash(){
 // HABEA DASHBOARD (ADMIN)
 // ============================================================
 function rHabeaDB(){
-  const ws=workers();
+  const ws=activeWorkers(); // амралтгүй ажилтнууд
   const hi=INSTRS.filter(i=>i.type==='habea');
   const todH=hi.filter(i=>activeToday(i));
   // Everyday HABEA: өнөөдрийн байдлаар тооцно (өдрөөс үл хамааран авсан эсэх)
@@ -822,7 +824,7 @@ function detailRow(i,ws){
 // ADD INSTRUCTION
 // ============================================================
 function rAddInstr(){
-  const ws=workers();
+  const ws=activeWorkers(); // амралтгүй ажилтнуудад л илгээх
   return `
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
   <div class="card">
@@ -846,7 +848,7 @@ function rAddInstr(){
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0;border-bottom:1px solid var(--border);margin-bottom:6px">
           <input type="checkbox" id="targAll" onchange="targAllChg()" checked style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer">
           <span style="font-size:12px;font-weight:600;color:var(--text)">Бүх ажилтан</span>
-          <span class="badge bgb" style="font-size:9px;margin-left:auto">${ws.length} хүн</span>
+          <span class="badge bgb" style="font-size:9px;margin-left:auto">${ws.length} идэвхтэй хүн</span>
         </label>
         <div id="targList" style="display:none;max-height:160px;overflow-y:auto">
           ${ws.map(w=>`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
@@ -890,7 +892,7 @@ function evList(){
 }
 
 function instrTbl(){
-  const ws=workers();
+  const ws=activeWorkers();
   const fil=iSrch?INSTRS.filter(i=>i.text.toLowerCase().includes(iSrch)):INSTRS;
   const tp=Math.ceil(fil.length/IPP),pg=Math.min(iPage,tp||1);
   const sl=fil.slice((pg-1)*IPP,pg*IPP);
@@ -990,7 +992,7 @@ function openEI(id){
   document.getElementById('eiDate').value=i.date||today();
   document.getElementById('eiText').value=i.text;
   const list=document.getElementById('eiTargList');
-  list.innerHTML=ws.map(w=>`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
+  list.innerHTML=activeWorkers().map(w=>`<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
     <input type="checkbox" class="eiTargCb" value="${w.id}" style="accent-color:var(--accent);width:13px;height:13px;cursor:pointer">
     <span style="font-size:12px;color:var(--text)">${w.name}</span>
     ${w.profession?`<span style="font-size:10px;color:var(--text3)">· ${w.profession}</span>`:''}
@@ -1028,7 +1030,7 @@ async function saveEI(){
 // TRACKING
 // ============================================================
 function rTracking(){
-  const ws=workers();
+  const ws=activeWorkers(); // амралтгүй ажилтнууд
   const fil=iSrch?INSTRS.filter(i=>i.text.toLowerCase().includes(iSrch)):INSTRS;
   const tp=Math.ceil(fil.length/IPP),pg=Math.min(iPage,tp||1);
   const sl=fil.slice((pg-1)*IPP,pg*IPP);
@@ -1067,7 +1069,7 @@ function rTracking(){
 // REPORT
 // ============================================================
 function rReport(){
-  const ws=workers();
+  const ws=activeWorkers(); // амралтгүй ажилтнууд
   const hi=INSTRS.filter(i=>i.type==='habea');
   const evInstrs=INSTRS.filter(i=>i.everyday);
   const onceInstrs=INSTRS.filter(i=>!i.everyday);
@@ -1734,7 +1736,7 @@ function makeCoverSheet(ws_, hi){
 // ── Main export ───────────────────────────────────────────────
 function exportExcel(){
   try{
-    const ws_=workers();
+    const ws_=activeWorkers(); // амралтгүй ажилтнууд
     const hi=INSTRS.filter(i=>i.type==='habea');
     const onceI=INSTRS.filter(i=>!i.everyday);
     const evI=INSTRS.filter(i=>i.everyday);
